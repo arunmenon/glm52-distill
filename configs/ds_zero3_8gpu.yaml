@@ -1,0 +1,24 @@
+# configs/ds_zero3_8gpu.yaml — per-VM training config (8 GPUs, one node).
+# Global batch stays 128: micro 1 x grad-accum 16 x 8 GPUs (pass --grad-accum 16).
+compute_environment: LOCAL_MACHINE
+debug: false
+deepspeed_config:
+  zero_stage: 3
+  zero3_init_flag: true
+  zero3_save_16bit_model: true
+  offload_optimizer_device: none
+  offload_param_device: none
+  gradient_clipping: 1.0
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 8
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
