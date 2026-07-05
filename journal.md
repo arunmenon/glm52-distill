@@ -103,15 +103,31 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   message support). New retro-audit tool: `benchmark_audit.py` + pack
   `--exclude-report`.
 
-## 2026-07-05 (night) — Student leg [IN PROGRESS]
+## 2026-07-05 (night) — Student leg [COMPLETE]
 
 - Pod: 4× RTX PRO 6000 (US-NC-2, $8.36/hr) — deliberately the same GPU as
   the target GCP fleet. On-pod watchdog armed (260 min).
 - One downloader wedge (silent hf stall; detected by byte-delta — new
   monitoring rule) cost ~$3.5.
-- Sequence: Air download → contamination audit of the 1,140 rows → pack
-  with exclusions → Air LoRA KD → merge → **Qwen3-8B v0 distill** →
-  GSM8K/IFEval vs base → push.
+- **Discovery #4 — contamination audit: 0/1,140.** The pilot corpus is
+  clean against all 6 benchmarks (exact + numerals-stripped + near).
+- **Discovery #5 — Air (106B) OOMs on 4× 96 GB under plain ZeRO-3**; needs
+  CPU offload (`ds_zero3_4gpu_offload.yaml` committed) or Tier-3's 180 GB
+  B200s. Retry deferred to Tier 3 (offloaded training too slow for the
+  remaining budget).
+- Qwen3-8B v0 trained (68 steps, loss_ce 1.42→) and pushed
+  (`qwen3_glm_distill_v0`). Benchmarks ran, and produced
+- **Discovery #6 — the pilot's most instructive negative result**: v0
+  REGRESSED vs base (GSM8K flexible 19.9→5.1, IFEval strict 34.9→29.4),
+  but base's own scores are ~4x below Qwen3-8B's known ability. Diagnosis:
+  (a) lm-eval defaults are thinking-model-hostile (gen budget + answer
+  extraction) — both models' scores are artifacts; (b) student_b packing
+  flattens GLM-format reasoning into plain content, teaching the student to
+  break its native `<think>` convention. Fixes are code (thinking-aware
+  eval config; format-mapping packer) — found for $25 instead of after a
+  100k-corpus production run. → Open items.
+- US-GA-2 stranded volume deleted (user call). Repo under git as of today.
+- Pod stopped. Balance at leg close: **$20.29**.
 
 ---
 
@@ -146,17 +162,21 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
 ## Open items
 
 1. Student leg completion → v0 benchmark deltas (the go/no-go evidence)
-2. **Generation-side judge/robustness fixes** (corpus_spec.md §"Generation-side
+2. **student_b thinking-format packer + thinking-aware eval configs**
+   (Discovery #6): wrap teacher reasoning in the student's native think
+   format at pack time; lm-eval with raised gen budget and post-`</think>`
+   extraction. Blocks any trustworthy v0 comparison.
+3. **Generation-side judge/robustness fixes** (corpus_spec.md §"Generation-side
    fixes"): verdict parse anchored after `</think>` only, `bon_judged` audit
    column, randomized candidate order, judge head+tail truncation,
    escalated-max-tokens retry for all-truncated prompts, per-slice sampling
    temps, top-K coverage mass column. NOT in code yet — the production run
    inherits a 20% silent judge fallback until this lands.
-3. Multi-turn bucket (02/03 message support; `MULTITURN_READY` flips)
-4. Smoke-run builder v2 source loaders (`--n-total 200`, CPU)
-5. Tier 3 decision: spec-validation teacher run (+$150–250)
-6. GCP production run (the goal; playbook complete)
-7. SECURITY, do now not later: rotate the HF token (it has traveled through
+4. Multi-turn bucket (02/03 message support; `MULTITURN_READY` flips)
+5. Smoke-run builder v2 source loaders (`--n-total 200`, CPU)
+6. Tier 3 decision: spec-validation teacher run (+$150–250)
+7. GCP production run (the goal; playbook complete)
+8. SECURITY, do now not later: rotate the HF token (it has traveled through
    chat and multiple rented pods) — requires user action in HF settings.
    Decide the US-GA-2 volume ($3.50/day; worthless under the GLM-5.2-only
    strategy since that DC has no CUDA-13 hosts — recommend delete).
