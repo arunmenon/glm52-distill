@@ -162,10 +162,12 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
 ## Open items
 
 1. Student leg completion → v0 benchmark deltas (the go/no-go evidence)
-2. **student_b thinking-format packer + thinking-aware eval configs**
-   (Discovery #6): wrap teacher reasoning in the student's native think
-   format at pack time; lm-eval with raised gen budget and post-`</think>`
-   extraction. Blocks any trustworthy v0 comparison.
+2. ~~student_b thinking-format packer + thinking-aware eval configs~~
+   **DONE (code)**: packer now wraps teacher reasoning in the student's
+   native `<think>`/`</think>` (auto-detected from student vocab) with a
+   loud guard if the template strips it; `07_eval_benchmarks.sh` raises the
+   gen budget to 4096 + reasoning-mode sampling + 16k model len. Needs a
+   re-pack + re-benchmark run to produce the first trustworthy v0 delta.
 3. **Generation-side judge/robustness fixes** (corpus_spec.md §"Generation-side
    fixes"): verdict parse anchored after `</think>` only, `bon_judged` audit
    column, randomized candidate order, judge head+tail truncation,

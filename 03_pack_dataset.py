@@ -148,12 +148,40 @@ def build_student_a(rows, tok, max_len, remap=None):
     return out
 
 
+def student_think_tags(tok):
+    """Return (open, close) reasoning delimiters in the STUDENT's own vocab, or
+    None if the student has no think convention. Detected from special tokens /
+    added-tokens so we distill into the format the student natively emits,
+    rather than flattening the teacher's reasoning into plain answer text
+    (the cause of the v0 regression, journal Discovery #6)."""
+    vocab = tok.get_vocab()
+    for open_t, close_t in (("<think>", "</think>"),
+                            ("<reasoning>", "</reasoning>")):
+        if open_t in vocab and close_t in vocab:
+            return open_t, close_t
+    return None
+
+
 def build_student_b(rows, tok, max_len):
-    """Sequence-level path: re-tokenize teacher text with the student tokenizer."""
-    out, skipped = [], 0
+    """Sequence-level path: re-tokenize teacher text with the student tokenizer,
+    preserving reasoning inside the student's native think delimiters."""
+    tags = student_think_tags(tok)
+    verified_tags = False   # confirm the template keeps our think block once
+    out, skipped, n_thinky = [], 0, 0
     for r in rows:
-        # Reconstruct full assistant text (reasoning + answer if separated).
-        text = (r.get("reasoning_text") or "") + (r["response_text"] or "")
+        reasoning = (r.get("reasoning_text") or "").strip()
+        answer = (r["response_text"] or "").strip()
+        if reasoning and tags:
+            # Emit in the student's own format: <think>…</think>\n\n<answer>.
+            open_t, close_t = tags
+            text = f"{open_t}\n{reasoning}\n{close_t}\n\n{answer}"
+            n_thinky += 1
+        elif reasoning:
+            # Student has no think convention: keep reasoning but plainly
+            # (documented degradation, not a silent flatten).
+            text = f"{reasoning}\n\n{answer}"
+        else:
+            text = answer
         msgs = [{"role": "user", "content": r["prompt"]},
                 {"role": "assistant", "content": text}]
         full = _flat_ids(tok.apply_chat_template(msgs, tokenize=True))
@@ -167,9 +195,21 @@ def build_student_b(rows, tok, max_len):
         if len(full) <= len(prefix) or len(full) > max_len:
             skipped += 1
             continue
+        # One-time guard: some chat templates strip <think> from assistant
+        # history. If ours does, our reasoning is silently deleted — fail loud.
+        if reasoning and tags and not verified_tags:
+            close_id = tok.convert_tokens_to_ids(tags[1])
+            if close_id not in full[len(prefix):]:
+                raise ValueError(
+                    f"student chat template dropped the {tags[1]} tag from the "
+                    "assistant turn — reasoning would be silently lost. This "
+                    "template needs enable_thinking or a manual template edit.")
+            verified_tags = True
         labels = [IGNORE] * len(prefix) + full[len(prefix):]
         out.append({"input_ids": full, "labels": labels})
-    print(f"student_b: kept {len(out)}, skipped {skipped}")
+    tag_note = f"native think tags {tags}" if tags else "NO think tags (plain)"
+    print(f"student_b: kept {len(out)}, skipped {skipped}, "
+          f"{n_thinky} with reasoning wrapped in {tag_note}")
     return out
 
 

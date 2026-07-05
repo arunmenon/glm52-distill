@@ -10,16 +10,25 @@ set -euo pipefail
 TASKS="${TASKS:-ifeval,gsm8k_cot,mmlu_pro}"   # add leaderboard tasks as needed
 TP="${TP:-8}"
 OUTDIR="${OUTDIR:-evals/benchmarks}"
+# Thinking-model settings (journal Discovery #6): these students emit a long
+# <think> block BEFORE the answer. Defaults (max_gen_toks 256, greedy) truncate
+# mid-thought and the answer-extraction regex never sees the final answer,
+# scoring a capable model near zero. Give room to think + sampling params that
+# match the model's reasoning mode; the harness extracts the post-</think> span.
+MAX_GEN_TOKS="${MAX_GEN_TOKS:-4096}"
+GEN_KWARGS="${GEN_KWARGS:-temperature=0.6,top_p=0.95,max_gen_toks=${MAX_GEN_TOKS}}"
+MODEL_LEN="${MODEL_LEN:-16384}"   # prompt + long thinking must fit
 mkdir -p "$OUTDIR"
 
 for MODEL in "$@"; do
   NAME=$(echo "$MODEL" | tr '/' '_')
-  echo "== Evaluating $MODEL =="
+  echo "== Evaluating $MODEL (gen: $GEN_KWARGS) =="
   lm_eval --model vllm \
-    --model_args "pretrained=${MODEL},tensor_parallel_size=${TP},dtype=bfloat16,gpu_memory_utilization=0.85,max_model_len=8192,seed=42,trust_remote_code=True" \
+    --model_args "pretrained=${MODEL},tensor_parallel_size=${TP},dtype=bfloat16,gpu_memory_utilization=0.85,max_model_len=${MODEL_LEN},seed=42,trust_remote_code=True" \
     --tasks "$TASKS" \
     --apply_chat_template \
     --fewshot_as_multiturn \
+    --gen_kwargs "$GEN_KWARGS" \
     --batch_size auto \
     --seed 42 \
     --output_path "${OUTDIR}/${NAME}" \
