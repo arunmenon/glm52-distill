@@ -194,6 +194,31 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   GLM-Z1-32B gate check), HF token rotation, and the pre-run smoke test to
   confirm realized_source_mix (esp. structured-output volume).
 
+## 2026-07-06 — Autonomous loop design (autoloop_design.md)
+
+- Design workflow: 3 architectures (deterministic-grid / llm-orchestrator /
+  bandit-optimizer) x 3 adversarial judge lenses (SRE / cost-controller /
+  researcher) -> synthesis. Ranked deterministic-grid 8.0 > llm 7.7 = bandit 7.7.
+- VERDICT: deterministic state-machine SPINE + grafted (a) multi-fidelity
+  successive-halving scheduler WITHOUT the Bayesian surrogate (keep rungs, drop
+  TPE — barely-better-than-random at this budget and hurts determinism),
+  (b) content-addressed artifact cache (corpus/packed/ckpt keyed by config hash
+  -> identical config = free cache hit). LLM DEMOTED to an offline, human-approved
+  proposer (propose.py), OFF by default — never in the autonomous spend loop.
+- Guardrails all code-enforced, two layers: conductor (soft) + watchdog.sh (hard
+  per-pod dead-man). 10 hard stops incl. 3 nested spend backstops, base-anchor
+  quality floor (Disc #6/#7 mandatory), contamination gate, funnel drift halt,
+  NaN/divergence no-merge, source-availability preflight, env pins.
+- New components: 08_conductor.py (FSM) + experiments.yaml (frozen contract) +
+  preflight.py + objective.py + cost.py + runpod.py/fleet.py + run_experiment.sh
+  + deploy_student.sh + liveness/heartbeat + leaderboard.py + propose.py. State
+  lives in the existing HF store — NO new infra service.
+- Roadmap crawl->walk->run (~2-3 days each). FIRST MILESTONE: thin deterministic
+  orchestrator, ZERO teacher spend (reuse the 1,140-trace corpus), 8-config
+  Qwen3-8B grid + one halving round, screen-benchmarks only, $40 hard cap,
+  watchdog dead-man. Exit criteria: reproduces Disc #7's +48pt GSM8K-strict
+  unmanned, survives a mid-run conductor kill -9, watchdog self-stop fires.
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |
