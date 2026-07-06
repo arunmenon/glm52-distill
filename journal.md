@@ -171,6 +171,29 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   R4 atomic MANIFEST write; R3 per-slice unmappable accounting (only if remap
   student in scope). All are hours of code, no GPU.
 
+## 2026-07-06 — Trace-recipe gaps closed + verified (Tier-3 code gate MET)
+
+- Trace-recipe review (43 agents) verdict YES-WITH-GAPS -> implemented all 14
+  gaps (6 must-fix + 8 non-blocking): R1 raise/escalate MAX_TOKENS + per-slice
+  temps; R2 kept-floor + persisted funnel + drop-reason ledger; R3 remap
+  position-masking + per-slice accounting; R4 atomic manifest; R5/R6/R7 judge
+  answer-channel/empty/trailing-number; D1 redistribute multi-turn off coding;
+  D2 structured-output source + user-turn extractor (volume made observable via
+  realized_source_mix, not fabricated); D3 LiveCodeBench decontam; D4 extension
+  seed; D6 per-slice temps; D7 post-dedup caps + backfill; top-20 coverage col.
+- **Verify -> fix -> reverify loop caught 4 defects self-review missed**: R5
+  NameError on its own fallback path, D3 crash of the 01b extension build, D2
+  system-boilerplate extractor, and D7 backfill DEAD CODE (reused exhausted
+  idx[k]). All remediated, unit-tested, and independently re-verified CLOSED.
+  Final: 14/14 gaps CLOSED.
+- Code pushed to PRIVATE github.com/arunmenon/glm52-distill (.gitignore guards
+  data/models/secrets). Student candidate menu (student_candidates.md) +
+  trace_recipe_review.md committed.
+- **Tier-3 code gate is now met.** Remaining Tier-3 blockers are decisions, not
+  code: top-up (~$150-250), student choice (Air + Qwen3-30B/32B; optional ~$1
+  GLM-Z1-32B gate check), HF token rotation, and the pre-run smoke test to
+  confirm realized_source_mix (esp. structured-output volume).
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |
