@@ -5,6 +5,17 @@
 
 sweep: milestone-qwen3-8b-v1
 
+# provider: how GPUs are acquired. The loop is provider-AGNOSTIC.
+#   kind: static  -> BYO GPUs you already have (any cloud / on-prem / bare metal);
+#                    set hosts: [{id, ip, port}] or AUTOLOOP_HOSTS env. No billing.
+#   kind: runpod  -> deploy/stop/balance via RunPod (default).
+#   kind: gcp     -> gcloud fleet (stub).
+provider:
+  kind: runpod
+  gpu: NVIDIA RTX PRO 6000 Blackwell Server Edition
+  count: 4
+  dc: US-NC-2
+
 budget:
   hard_cap_usd: 40        # conductor enters DRAINING at 100%
   reserve_usd: 10         # never deploy a step unless balance - projected > this

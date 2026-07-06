@@ -21,7 +21,7 @@ import time
 from pathlib import Path
 
 import yaml
-import runpod
+import providers
 
 SSH_OPTS = ["-o", "StrictHostKeyChecking=accept-new", "-o", "ConnectTimeout=20"]
 
@@ -48,8 +48,10 @@ def ssh(ip, port, cmd, timeout=None):
          f"root@{ip}", cmd], capture_output=True, text=True, timeout=timeout)
 
 
-def guard(run_dir: Path, plan, spent):
-    """Return None to proceed, or a halt-reason string."""
+def guard(run_dir: Path, plan, provider, spent):
+    """Return None to proceed, or a halt-reason string. The MONEY guard applies
+    only to billed providers (provider.balance() is not None); for BYO/on-prem
+    GPUs the HALT + wall-clock guards carry safety instead."""
     if (run_dir / "HALT").exists():
         return "HALT sentinel present"
     cap = plan["budget"]["hard_cap_usd"]
@@ -57,9 +59,11 @@ def guard(run_dir: Path, plan, spent):
     if spent >= cap:
         return f"hard spend cap ${cap} reached (spent ~${spent:.2f})"
     try:
-        bal = runpod.balance()
+        bal = provider.balance()
     except Exception as e:  # noqa: BLE001
         return f"cannot read balance ({e}) — refusing to spend blind"
+    if bal is None:
+        return None                       # unbilled provider: money guard N/A
     if bal - reserve <= 0:
         return f"balance ${bal:.2f} within reserve ${reserve}"
     return None
@@ -91,6 +95,7 @@ def main():
     args = ap.parse_args()
 
     plan = yaml.safe_load(open(args.plan))
+    provider = providers.make_provider(plan.get("provider", {"kind": "runpod"}))
     run_dir = Path(f"runs/{plan['sweep']}")
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -104,7 +109,7 @@ def main():
     done = ledger_read(run_dir)
     spent = sum(r.get("cost", 0) for r in done.values())
 
-    reason = guard(run_dir, plan, spent)
+    reason = guard(run_dir, plan, provider, spent)
     if reason:
         raise SystemExit(f"HALTED before deploy: {reason}")
 
@@ -115,28 +120,23 @@ def main():
     projected += 3  # anchor
     projected += plan["rung"]["keep_top"] * 6  # promotions to full
     remaining = projected - spent
-    bal = runpod.balance()
-    if bal - plan["budget"]["reserve_usd"] < remaining:
+    bal = provider.balance()
+    if bal is not None and bal - plan["budget"]["reserve_usd"] < remaining:
         raise SystemExit(
             f"HALTED before deploy: balance ${bal:.2f} - reserve "
             f"${plan['budget']['reserve_usd']} = ${bal - plan['budget']['reserve_usd']:.2f} "
             f"< projected remaining ${remaining:.2f}. Top up or shrink the grid "
             "(the conductor will not start a sweep it cannot finish).")
 
-    # deploy (or reuse) the single student pod
-    pod_id = args.pod_id
-    if not pod_id:
-        pod = runpod.deploy_student(f"{plan['sweep']}-student")
-        if "error" in pod:
-            raise SystemExit(f"deploy failed: {pod['error']} — try again when "
-                             "RTX PRO 6000 capacity frees, or pass --pod-id")
-        pod_id = pod["id"]
-        print(f"deployed student pod {pod_id} (${pod.get('costPerHr')}/hr)")
-    ssh_addr = runpod.pod_ssh(pod_id)
-    if not ssh_addr:
-        raise SystemExit(f"pod {pod_id} never exposed SSH")
-    ip, port = ssh_addr
-    print(f"pod SSH {ip}:{port}")
+    # acquire a GPU host through the provider (deploy, resume, or BYO pool)
+    try:
+        host = provider.acquire({"name": f"{plan['sweep']}-student",
+                                 "pod_id": args.pod_id})
+    except Exception as e:  # noqa: BLE001
+        raise SystemExit(f"acquire failed: {e}")
+    pod_id, ip, port = host["id"], host["ip"], host["port"]
+    print(f"[{provider.name}] host {pod_id} @ {ip}:{port} "
+          f"(${host.get('cost_per_hr', 0)}/hr)")
 
     # bootstrap the pod: sync repo, pull artifacts, arm watchdog
     subprocess.run(["rsync", "-rlt", "-e",
@@ -169,7 +169,7 @@ def main():
                         "-i", str(Path.home() / ".ssh/id_ed25519"), str(run_dir / "anchor.json"),
                         f"root@{ip}:/workspace/glm52-distill/anchors/qwen.json"], check=False)
         if not ok:
-            runpod.stop_pod(pod_id)
+            provider.release(host)
             raise SystemExit(
                 f"ANCHOR FAILED: base GSM8K flexible {g} < "
                 f"{plan['anchor']['min_gsm8k_flexible']} — methodology bug (see "
@@ -183,7 +183,7 @@ def main():
         if eid in done:
             print(f"[skip] {eid} already in ledger")
             continue
-        reason = guard(run_dir, plan, spent)
+        reason = guard(run_dir, plan, provider, spent)
         if reason:
             print(f"[stop] {reason}; finishing here.")
             break
@@ -206,7 +206,7 @@ def main():
         eid = f"{r['experiment_id']}-full"
         if eid in ledger_read(run_dir):
             continue
-        if guard(run_dir, plan, spent):
+        if guard(run_dir, plan, provider, spent):
             break
         cfg = {**r["config"], "experiment_id": eid, "rung": 1, "mode": "train",
                "heldout": plan["corpus"]["heldout"]}
@@ -228,8 +228,8 @@ def main():
     (run_dir / "leaderboard.md").write_text("\n".join(lb))
     print("\n".join(lb))
     print(f"\napprox spend this sweep: ${spent:.2f}")
-    runpod.stop_pod(pod_id)
-    print(f"pod {pod_id} stopped. Sweep complete.")
+    provider.release(host)
+    print(f"[{provider.name}] host {pod_id} released. Sweep complete.")
 
 
 if __name__ == "__main__":
