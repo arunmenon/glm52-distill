@@ -117,15 +117,19 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   remaining budget).
 - Qwen3-8B v0 trained (68 steps, loss_ce 1.42→) and pushed
   (`qwen3_glm_distill_v0`). Benchmarks ran, and produced
-- **Discovery #6 — the pilot's most instructive negative result**: v0
-  REGRESSED vs base (GSM8K flexible 19.9→5.1, IFEval strict 34.9→29.4),
-  but base's own scores are ~4x below Qwen3-8B's known ability. Diagnosis:
-  (a) lm-eval defaults are thinking-model-hostile (gen budget + answer
-  extraction) — both models' scores are artifacts; (b) student_b packing
-  flattens GLM-format reasoning into plain content, teaching the student to
-  break its native `<think>` convention. Fixes are code (thinking-aware
-  eval config; format-mapping packer) — found for $25 instead of after a
-  100k-corpus production run. → Open items.
+- **Discovery #6 — instructive negative result, and a CORRECTED
+  diagnosis.** Pilot showed v0 below base, base itself ~4x below Qwen3-8B's
+  known ability. Two hypotheses were logged: (a) thinking-hostile lm-eval
+  defaults; (b) packer flattening reasoning. **2026-07-06 re-run verdict:**
+  (a) is TRUE and fully explains the low absolute scores — with a raised gen
+  budget + IFEval think-strip re-score, base recovered to GSM8K flexible
+  **0.919** (from 0.199) and IFEval prompt-strict **0.826** (from 0.349),
+  i.e. its published range. (b) is FALSE — the teacher ran without a
+  reasoning parser, so thinking was always INLINE in response_text with
+  `<think>` tags; the original packing already preserved format. The packer
+  "fix" is a validated no-op for this corpus (kept for corpora that DO split
+  reasoning). Net: the pilot's eval methodology was broken, not the data or
+  the model. v0-vs-base (trustworthy) pending the v0 re-benchmark.
 - US-GA-2 stranded volume deleted (user call). Repo under git as of today.
 - Pod stopped. Balance at leg close: **$20.29**.
 
