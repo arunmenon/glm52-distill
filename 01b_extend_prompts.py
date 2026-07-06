@@ -106,7 +106,12 @@ def main():
     targets = bp.slice_targets(args.n_total)
     # extra headroom: base-overlap and near-dups will eat some candidates
     over = {k: int(v * 1.4) for k, v in targets.items()}
+    # D4: shift the shuffle seed so the extension draws a DIFFERENT stream
+    # window than the base run (else every candidate is a base duplicate).
+    _orig_seed = bp.SEED
+    bp.SEED = _orig_seed + args.id_offset
     pools = bp.load_slices(over)
+    bp.SEED = _orig_seed
 
     kept = {k: [] for k in targets}
     n_exact, n_near, n_bench = 0, 0, 0

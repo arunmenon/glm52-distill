@@ -44,6 +44,24 @@ compliances on benign).
 6. Per-slice funnel report every build: prompts → generated → survived
    truncation → judged vs fallback → packed (per student).
 
+## Generation-side fixes — STATUS (2026-07-06, mostly DONE)
+
+Implemented (commit history): judge verdict parse scans the ANSWER channel only
++ rejects unclosed-think verdicts + trailing-number heuristic + `bon_judged`;
+randomized candidate order; per-slice sampling temps (`SLICE_TEMPS`);
+MAX_TOKENS raised to 16384 with a one-shot escalation to 28672 before dropping;
+answer-emptiness (post-`</think>`) filter; per-position top-20 coverage-mass
+column; per-shard drop-reason ledger + persisted funnel.json; kept-rows floor
+before sealing; atomic MANIFEST/funnel writes; pack `--max-len` default 16384
+to match generation; remap masks unmappable positions (keeps the trace) with
+per-slice accounting; LiveCodeBench added to benchmark decontamination; a real
+structured-output source (json-mode) added; multi-turn's 5% redistributed off
+coding across the other slices; post-dedup per-source cap + realized-mix report.
+
+Still deferred (not blocking Tier-3): full multi-turn generation path
+(`MULTITURN_READY`); keep-all-correct-candidates diversity mode (D5).
+
+--- original list (for reference) ---
 ## Generation-side fixes required before production run (from review)
 - Judge verdict parse anchored after </think> only; bon_judged column;
   randomized candidate order; head+tail truncation for judge view.

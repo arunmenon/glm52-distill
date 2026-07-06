@@ -98,13 +98,30 @@ def build_remap(teacher_dir: str, student_dir: str) -> dict:
     return remap
 
 
+UNMAPPABLE_DROP_FRAC = 0.20   # drop a sample only if >20% of its response is unmappable
+
+
 def build_student_a(rows, tok, max_len, remap=None):
-    """Token-exact path: reuse teacher response token ids (remapped if needed)."""
+    """Token-exact path: reuse teacher response token ids (remapped if needed).
+
+    R3: when a teacher token has no student equivalent (remap mode), MASK that
+    single position (input=unk, label=IGNORE, top-K masked) instead of dropping
+    the whole trace — unmappable tokens cluster in CJK/rare-Unicode/notation, so
+    whole-sample dropping silently annihilates those slices while the global
+    rate reads <1%. Only drop a sample if it is mostly unmappable. Accounting is
+    per-slice so the worst slice is visible, not just the mean."""
     eos = tok.eos_token_id
+    unk = tok.unk_token_id
+    if unk is None:
+        unk = tok.pad_token_id if tok.pad_token_id is not None else (eos or 0)
     out = []
     skipped = 0
-    dropped_unmappable = 0
+    from collections import defaultdict
+    slc = defaultdict(lambda: {"samples": 0, "dropped_mostly_unmappable": 0,
+                               "unmappable_positions": 0, "response_tokens": 0})
     for r in rows:
+        sl = r.get("slice", "general")
+        slc[sl]["samples"] += 1
         prefix = prefix_ids_for(tok, r["prompt"])
         resp = list(r["response_token_ids"])
         tids = [list(x) for x in r["topk_ids"]]
@@ -112,11 +129,22 @@ def build_student_a(rows, tok, max_len, remap=None):
         if len(resp) != len(tids):  # defensive; should never happen
             skipped += 1
             continue
+        slc[sl]["response_tokens"] += len(resp)
+        label_mask = [False] * len(resp)   # True = IGNORE this label position
         if remap is not None:
-            if any(t not in remap for t in resp):
-                dropped_unmappable += 1
+            n_unmap = sum(1 for t in resp if t not in remap)
+            if n_unmap and n_unmap / max(len(resp), 1) > UNMAPPABLE_DROP_FRAC:
+                slc[sl]["dropped_mostly_unmappable"] += 1
                 continue
-            resp = [remap[t] for t in resp]
+            slc[sl]["unmappable_positions"] += n_unmap
+            new_resp = []
+            for j, t in enumerate(resp):
+                if t in remap:
+                    new_resp.append(remap[t])
+                else:                       # mask this position, keep the trace
+                    new_resp.append(unk)
+                    label_mask[j] = True
+            resp = new_resp
             for ids_k, lps_k in zip(tids, tlps):
                 for j, t in enumerate(ids_k):
                     if t in remap:
@@ -126,11 +154,13 @@ def build_student_a(rows, tok, max_len, remap=None):
                         lps_k[j] = -1e9
         if eos is not None and (not resp or resp[-1] != eos):
             resp.append(eos)
+            label_mask.append(False)
             tids.append([-1] * K)      # no teacher dist for appended eos
             tlps.append([-1e9] * K)
 
+        resp_labels = [IGNORE if m else t for t, m in zip(resp, label_mask)]
         input_ids = prefix + resp
-        labels = [IGNORE] * len(prefix) + resp
+        labels = [IGNORE] * len(prefix) + resp_labels
         topk_ids = [[-1] * K] * len(prefix) + tids
         topk_lps = [[-1e9] * K] * len(prefix) + tlps
 
@@ -141,10 +171,12 @@ def build_student_a(rows, tok, max_len, remap=None):
             {"input_ids": input_ids, "labels": labels,
              "topk_ids": topk_ids, "topk_logprobs": topk_lps}
         )
-    n_in = max(len(rows), 1)
-    print(f"student_a: kept {len(out)}, skipped {skipped}, "
-          f"dropped_unmappable {dropped_unmappable} "
-          f"({dropped_unmappable / n_in:.2%} — verify this stays <1%)")
+    print(f"student_a: kept {len(out)}, skipped {skipped}")
+    for sl, d in sorted(slc.items()):
+        rate = d["unmappable_positions"] / max(d["response_tokens"], 1)
+        print(f"  [{sl}] samples={d['samples']} "
+              f"dropped_mostly_unmappable={d['dropped_mostly_unmappable']} "
+              f"unmappable_token_rate={rate:.3%}")
     return out
 
 
@@ -227,7 +259,7 @@ def main():
     ap.add_argument("--exclude-report", default=None,
                     help="benchmark_audit.py report; contaminated sample_ids "
                          "are dropped before packing")
-    ap.add_argument("--max-len", type=int, default=8192,
+    ap.add_argument("--max-len", type=int, default=16384,
                     help="drop samples longer than this many tokens; lower to "
                          "6144 if training OOMs")
     ap.add_argument("--gate", default="gate/gate_result.json",

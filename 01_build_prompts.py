@@ -45,6 +45,10 @@ BENCHMARKS = [
     ("mmlu_pro", "TIGER-Lab/MMLU-Pro", None, "test", lambda r: r.get("question", "")),
     ("humaneval", "openai/openai_humaneval", None, "test", lambda r: r.get("prompt", "")),
     ("mbpp", "google-research-datasets/mbpp", None, "test", lambda r: r.get("text", "")),
+    # LiveCodeBench (review D3): coding is the largest slice and LCB is a scored
+    # eval; without this screen, train/test leakage inflates the coding delta.
+    ("livecodebench", "livecodebench/code_generation_lite", "release_v5", "test",
+     lambda r: _first_of(r, "question_content", "question", "prompt")),
 ]
 
 
@@ -116,10 +120,16 @@ SLICES = {
          lambda r: (r.get("messages") or [{}])[0].get("content", ""), 0.60),
     ]},
     "structured_science": {"share": 0.05, "sources": [
+        # D2: a real structured-OUTPUT source (JSON/schema/extraction), not just
+        # science QA — the slice was named "structured output + science" but had
+        # zero structured-output backing.
+        ("json_mode", "NousResearch/json-mode-eval", None, "train",
+         lambda r: (r.get("prompt") or [{}])[0].get("content", "")
+         if isinstance(r.get("prompt"), list) else _first_of(r, "prompt", "question"), 0.40),
         ("webinstruct", "TIGER-Lab/WebInstruct-verified", None, "train",
-         lambda r: _first_of(r, "question", "instruction", "prompt"), 0.60),
+         lambda r: _first_of(r, "question", "instruction", "prompt"), 0.40),
         ("sciq_style", "allenai/sciq", None, "train",
-         lambda r: r.get("question", ""), 0.60),
+         lambda r: r.get("question", ""), 0.30),   # cap the MC-factoid source
     ]},
     # multiturn 5%: pending MULTITURN_READY; share redistributed in slice_targets
 }
@@ -128,7 +138,12 @@ SLICES = {
 def slice_targets(n_total: int) -> dict:
     shares = {k: v["share"] for k, v in SLICES.items()}
     if not MULTITURN_READY:
-        shares["coding"] += 0.05   # park multiturn's share in coding for now
+        # D1: spread the parked multi-turn 5% across the NON-coding capability
+        # slices (not dumped on coding, which was silently pushing it to 45%).
+        spread = {"general": 0.02, "tool_calling": 0.01,
+                  "long_context": 0.01, "structured_science": 0.01}
+        for k, add in spread.items():
+            shares[k] += add
     total_share = sum(shares.values())
     targets = {k: int(n_total * s / total_share) for k, s in shares.items()}
     # remainder to the largest slice (audit fix: no silent flooring loss)
@@ -165,10 +180,14 @@ def load_benchmark_index():
     n = 0
     for name, repo, config, split, extract in BENCHMARKS:
         try:
-            ds = load_dataset(repo, config, split=split) if config \
-                else load_dataset(repo, split=split)
+            ds = load_dataset(repo, config, split=split, trust_remote_code=True) \
+                if config else load_dataset(repo, split=split, trust_remote_code=True)
         except Exception as e:  # noqa: BLE001
-            raise SystemExit(f"benchmark decontam REQUIRES {name} ({repo}): {e}")
+            raise SystemExit(
+                f"benchmark decontam REQUIRES {name} ({repo}): {e}\n"
+                "If this benchmark genuinely cannot load, remove it from "
+                "BENCHMARKS AND from 07_eval_benchmarks.sh TASKS together — "
+                "never score a benchmark you don't decontaminate against.")
         texts = [extract(r) for r in ds if extract(r)]
         for t in texts:
             exact.add(hashlib.md5(norm(t).encode()).hexdigest())
@@ -260,12 +279,23 @@ def main():
     else:
         bench_exact, bench_nonum, bench_lsh = load_benchmark_index()
 
+    # Per-source cap on the POST-DEDUP kept set (D7): collection-time caps are
+    # upper bounds BEFORE dedup, so the realized source mix can skew. Enforce
+    # the cap on what actually survives, per slice.
+    src_cap = {}
+    for k in targets:
+        srcs = SLICES.get(k, {}).get("sources", [])
+        for (name, *_rest, cap_frac) in srcs:
+            src_cap[(k, name)] = max(1, int(targets[k] * cap_frac))
+
     # Round-robin cross-slice dedup (audit fix: no fixed-order slice bias).
     lsh = MinHashLSH(threshold=0.8, num_perm=64)
     exact_seen = set()
     kept = {k: [] for k in targets}
+    src_kept = {k: {} for k in targets}       # realized per-source counts
     n_bench = {k: 0 for k in targets}
     n_dup = {k: 0 for k in targets}
+    n_capped = {k: 0 for k in targets}
     queues = {k: [e for e in extra if e["slice"] == k] + pools.get(k, [])
               for k in targets}
     idx = {k: 0 for k in targets}
@@ -279,6 +309,13 @@ def main():
                 idx[k] += 1
                 active = True
                 p = item["prompt"]
+                src = item.get("source", "extra")
+                # post-dedup per-source cap (skip, don't drop — a later source
+                # may still fill the slice)
+                cap = src_cap.get((k, src))
+                if cap is not None and src_kept[k].get(src, 0) >= cap:
+                    n_capped[k] += 1
+                    continue
                 h = hashlib.md5(norm(p).encode()).hexdigest()
                 if (h in bench_exact
                         or hashlib.md5(norm_nonum(p).encode()).hexdigest() in bench_nonum):
@@ -302,10 +339,17 @@ def main():
                 if m is not None:
                     lsh.insert(f"{k}{len(kept[k])}", m)
                 kept[k].append(item)
+                src_kept[k][src] = src_kept[k].get(src, 0) + 1
                 break   # round-robin: next slice after each keep
     for k in targets:
-        funnel[k].update({"kept": len(kept[k]), "target": targets[k],
-                          "dropped_dup": n_dup[k], "dropped_benchmark": n_bench[k]})
+        nk = max(len(kept[k]), 1)
+        funnel[k].update({
+            "kept": len(kept[k]), "target": targets[k],
+            "dropped_dup": n_dup[k], "dropped_benchmark": n_bench[k],
+            "dropped_source_cap": n_capped[k],
+            "realized_source_mix": {s: round(c / nk, 3)
+                                    for s, c in src_kept[k].items()},
+        })
         if len(kept[k]) < 0.98 * targets[k]:
             print(f"WARNING: slice {k} short: {len(kept[k])}/{targets[k]}")
 
