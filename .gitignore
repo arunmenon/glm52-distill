@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+
+# Data / model artifacts (large, reproducible; live in HF store)
+corpus/
+corpus_ext/
+packed/
+packed_v2/
+ckpts/
+models/
+data/
+pilot*/
+evals*/
+*.parquet
+*.safetensors
+*.jsonl
+
+# Run state / logs / secrets
+.state/
+*.log
+env_*.lock.txt
+.pilot_env
+*.pem
+*_token*
+gate_result.json
+contamination_report.json
