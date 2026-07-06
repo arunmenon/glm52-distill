@@ -1,0 +1,44 @@
+# experiments.yaml — the FROZEN, human-approved sweep plan (the contract).
+# preflight.py validates this; the conductor executes ONLY what's here.
+# First milestone: unmanned Qwen3-8B grid, ZERO teacher spend (reuse the
+# existing 1,140-trace corpus already in PILOT_STORE).
+
+sweep: milestone-qwen3-8b-v1
+
+budget:
+  hard_cap_usd: 40        # conductor enters DRAINING at 100%
+  reserve_usd: 10         # never deploy a step unless balance - projected > this
+  per_trial_cap_usd: 4    # reject a config whose estimate exceeds this
+
+student:
+  hf_repo: Qwen/Qwen3-8B
+  local: /workspace/models/qwen3-8b
+  family: qwen            # non-GLM -> sequence KD; alpha forced 0
+
+corpus:
+  store_glob: "corpus/*.parquet"     # pulled from PILOT_STORE
+  heldout: data/prompts_heldout.jsonl
+  gate: gate_result.json
+  exclude_report: contamination_report.json   # from the 0/1,140 audit
+
+eval:
+  tasks: "gsm8k_cot,ifeval"          # screen benchmarks (no teacher/judge)
+  tp: 4
+  # base must recover to its published range or ANCHOR pauses for a human
+  # (Discovery #6: a broken eval config, not the model, produced 4x-low scores)
+anchor:
+  required: true
+  min_gsm8k_flexible: 0.70
+  min_ifeval_strict_stripped: 0.60
+
+rung:
+  proxy_rows: 800         # rung-0 trains on a subset; promote winners to full
+  keep_top: 2
+
+# grid: full cross-product expanded by preflight.py into deterministic trials.
+grid:
+  alpha: [0.0]            # sequence KD for Qwen (validator enforces alpha==0 for non-GLM)
+  lr: [5.0e-6, 1.0e-5]
+  lora_rank: [64, 128]
+  epochs: [1, 2]
+  # -> 1 x 2 x 2 x 2 = 8 rung-0 trials, 2 promoted to full

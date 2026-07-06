@@ -135,10 +135,13 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.0)
     ap.add_argument("--temperature", type=float, default=2.0)
     ap.add_argument("--lora", action="store_true")
+    ap.add_argument("--lora-rank", type=int, default=128)
     ap.add_argument("--lr", type=float, default=1e-5)
     ap.add_argument("--epochs", type=float, default=2.0)
     ap.add_argument("--micro-bsz", type=int, default=1)
     ap.add_argument("--grad-accum", type=int, default=8)
+    ap.add_argument("--max-train-samples", type=int, default=0,
+                    help="proxy rung: train on the first N samples only (0=all)")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -164,7 +167,7 @@ def main():
         # grad and LoRA adapters silently receive zero gradient.
         model.enable_input_require_grads()
         lcfg = LoraConfig(
-            r=128, lora_alpha=256, lora_dropout=0.05,
+            r=args.lora_rank, lora_alpha=2 * args.lora_rank, lora_dropout=0.05,
             target_modules="all-linear", task_type="CAUSAL_LM",
             # MoE students (GLM-4.5-Air): keep LoRA off the expert routers —
             # adapting them destabilizes routing. Matches `mlp.gate`, not
@@ -175,6 +178,9 @@ def main():
         model.print_trainable_parameters()
 
     ds = load_from_disk(args.data)
+    if args.max_train_samples and len(ds["train"]) > args.max_train_samples:
+        ds["train"] = ds["train"].select(range(args.max_train_samples))
+        print(f"proxy rung: train limited to {args.max_train_samples} samples")
     has_topk = "topk_ids" in ds["train"].column_names
 
     # W&B only when actually configured; otherwise a headless VM hangs at the
