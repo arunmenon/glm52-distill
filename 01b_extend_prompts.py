@@ -59,8 +59,13 @@ def load_benchmark_prompts():
     from datasets import load_dataset
     texts = []
     for name, repo, config, split, extract in BENCHMARKS:
-        ds = load_dataset(repo, config, split=split) if config \
-            else load_dataset(repo, split=split)
+        try:
+            # trust_remote_code REQUIRED for LiveCodeBench (custom loader);
+            # fail loud rather than silently skip a scored benchmark.
+            ds = load_dataset(repo, config, split=split, trust_remote_code=True) \
+                if config else load_dataset(repo, split=split, trust_remote_code=True)
+        except Exception as e:  # noqa: BLE001
+            raise SystemExit(f"benchmark decontam REQUIRES {name} ({repo}): {e}")
         t = [extract(r) for r in ds if extract(r)]
         print(f"benchmark decontam: {name} -> {len(t)} test items loaded")
         texts.extend(t)

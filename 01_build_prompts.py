@@ -68,6 +68,18 @@ def _hermes_first_user(row):
     return ""
 
 
+def _json_mode_user(row):
+    """User turn from json-mode-eval (D2: prompt is a message list [system-schema,
+    user-request]; take the USER request, not the system schema boilerplate)."""
+    p = row.get("prompt")
+    if isinstance(p, list):
+        for m in p:
+            if m.get("role") == "user":
+                return m.get("content", "")
+        return p[-1].get("content", "") if p else ""
+    return _first_of(row, "prompt", "question")
+
+
 def _tulu_general(row):
     """Tulu first user turn, EXCLUDING math/code/safety subsets (mix distortion
     + unaudited jailbreak prompts; corpus_spec.md)."""
@@ -120,16 +132,18 @@ SLICES = {
          lambda r: (r.get("messages") or [{}])[0].get("content", ""), 0.60),
     ]},
     "structured_science": {"share": 0.05, "sources": [
-        # D2: a real structured-OUTPUT source (JSON/schema/extraction), not just
-        # science QA — the slice was named "structured output + science" but had
-        # zero structured-output backing.
+        # D2: a real structured-OUTPUT source (JSON/schema/extraction), extractor
+        # fixed to pull the USER turn (was grabbing the system schema boilerplate).
+        # json-mode-eval is a small (~hundreds) real source. IMPORTANT (review D2):
+        # the pre-Tier-3 smoke test MUST inspect realized_source_mix in
+        # funnel.json — if json_mode is <~25% of this slice at scale, swap in a
+        # higher-volume structured-output source (verify it loads first).
         ("json_mode", "NousResearch/json-mode-eval", None, "train",
-         lambda r: (r.get("prompt") or [{}])[0].get("content", "")
-         if isinstance(r.get("prompt"), list) else _first_of(r, "prompt", "question"), 0.40),
+         _json_mode_user, 0.30),
         ("webinstruct", "TIGER-Lab/WebInstruct-verified", None, "train",
-         lambda r: _first_of(r, "question", "instruction", "prompt"), 0.40),
+         lambda r: _first_of(r, "question", "instruction", "prompt"), 0.45),
         ("sciq_style", "allenai/sciq", None, "train",
-         lambda r: r.get("question", ""), 0.30),   # cap the MC-factoid source
+         lambda r: r.get("question", ""), 0.25),   # cap the MC-factoid source
     ]},
     # multiturn 5%: pending MULTITURN_READY; share redistributed in slice_targets
 }
@@ -341,12 +355,44 @@ def main():
                 kept[k].append(item)
                 src_kept[k][src] = src_kept[k].get(src, 0) + 1
                 break   # round-robin: next slice after each keep
+
+    # D7 backfill: caps are anti-monoculture ceilings, not hard floors. If a
+    # slice finished SHORT of target (a source under-delivered after dedup and
+    # no other source could compensate because each was pinned at its cap),
+    # fill the remainder from that slice's leftover, cap-ignoring but still
+    # dedup'd — coverage beats a perfectly-balanced-but-starved slice.
+    n_backfill = {k: 0 for k in targets}
+    for k in targets:
+        while len(kept[k]) < targets[k] and idx[k] < len(queues[k]):
+            item = queues[k][idx[k]]
+            idx[k] += 1
+            p = item["prompt"]
+            h = hashlib.md5(norm(p).encode()).hexdigest()
+            if (h in bench_exact
+                    or hashlib.md5(norm_nonum(p).encode()).hexdigest() in bench_nonum
+                    or h in exact_seen):
+                continue
+            short = len(norm(p).split()) < SHORT_TOKENS_EXACT_ONLY
+            m = None
+            if not short:
+                m = minhash(p)
+                if lsh.query(m) or (bench_lsh is not None and bench_lsh.query(m)):
+                    continue
+            exact_seen.add(h)
+            if m is not None:
+                lsh.insert(f"{k}bf{len(kept[k])}", m)
+            kept[k].append(item)
+            src_kept[k][item.get("source", "extra")] = \
+                src_kept[k].get(item.get("source", "extra"), 0) + 1
+            n_backfill[k] += 1
+
     for k in targets:
         nk = max(len(kept[k]), 1)
         funnel[k].update({
             "kept": len(kept[k]), "target": targets[k],
             "dropped_dup": n_dup[k], "dropped_benchmark": n_bench[k],
             "dropped_source_cap": n_capped[k],
+            "backfilled": n_backfill[k],
             "realized_source_mix": {s: round(c / nk, 3)
                                     for s, c in src_kept[k].items()},
         })

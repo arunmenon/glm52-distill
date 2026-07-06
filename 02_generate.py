@@ -194,7 +194,7 @@ async def judge_pick(session, base_url, model, prompt, candidates, seed):
                 shown_idx = int(nums[-1]) - 1
                 if 0 <= shown_idx < len(shown):
                     return order[shown_idx], True
-        print(f"[judge-fallback] unparseable/truncated verdict: {raw[:80]!r}",
+        print(f"[judge-fallback] unparseable/truncated verdict: {content[:80]!r}",
               file=sys.stderr)
     except Exception as e:  # noqa: BLE001
         print(f"[judge-fallback] {e}", file=sys.stderr)
