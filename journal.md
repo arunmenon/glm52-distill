@@ -192,14 +192,16 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
    budget-gated runner `student_rebench.sh`: CPU re-pack + guard (free) →
    base anchor ($5, must recover to known ability or STOP) → gated v0
    retrain+bench ($20). Ready to run on a pod.
-3. **Generation-side judge/robustness fixes** (corpus_spec.md §"Generation-side
-   fixes"): verdict parse anchored after `</think>` only, `bon_judged` audit
-   column, randomized candidate order, judge head+tail truncation,
-   escalated-max-tokens retry for all-truncated prompts, per-slice sampling
-   temps, top-K coverage mass column. NOT in code yet — the production run
-   inherits a 20% silent judge fallback until this lands.
+3. **Generation-side judge/robustness fixes** — PARTIALLY DONE (2026-07-06):
+   verdict parse now rejects unclosed-think-block verdicts + takes last-number,
+   candidate order randomized per judgment, `bon_judged` audit column added
+   (commit bf31b41). STILL PENDING: escalated-max-tokens retry for
+   all-truncated prompts, per-slice sampling temps, top-K coverage-mass column.
 4. Multi-turn bucket (02/03 message support; `MULTITURN_READY` flips)
-5. Smoke-run builder v2 source loaders (`--n-total 200`, CPU)
+5. ~~Smoke-run builder v2 source loaders~~ DONE (2026-07-06, ~$2): all 6
+   slices populate; 2 broken loaders caught + fixed (oss_instruct repo gone
+   → ise-uiuc/Magicoder-OSS-Instruct-75K; xlam gated → NousResearch/
+   hermes-function-calling-v1). Builder v2 validated end to end.
 6. Tier 3 decision: spec-validation teacher run (+$150–250)
 7. GCP production run (the goal; playbook complete)
 8. SECURITY, do now not later: rotate the HF token (it has traveled through
