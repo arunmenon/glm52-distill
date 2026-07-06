@@ -34,6 +34,7 @@ import asyncio
 import hashlib
 import json
 import os
+import random
 import re
 import subprocess
 import sys
@@ -69,6 +70,7 @@ SCHEMA = pa.schema(
         pa.field("gen_seed", pa.int64()),
         pa.field("bon_n", pa.int32()),        # candidates generated
         pa.field("bon_pick", pa.int32()),     # index of chosen candidate
+        pa.field("bon_judged", pa.bool_()),   # False if judge fell back to 0
     ]
 )
 
@@ -126,13 +128,27 @@ async def post_chat(session, base_url, payload):
         return await resp.json()
 
 
-async def judge_pick(session, base_url, model, prompt, candidates, seed) -> int:
-    """Return index into `candidates` of the judge's pick. Falls back to 0."""
-    # Judge the final answers only: thinking traces would eat the char budget
-    # and the judge should grade what a user would see.
+async def judge_pick(session, base_url, model, prompt, candidates, seed):
+    """Return (index_into_candidates, judged_ok). judged_ok is False when the
+    verdict was unparseable and index falls back to 0.
+
+    Robustness fixes (journal Open item 3):
+      - candidate order is randomized per judgment (seeded) so the judge's
+        positional bias doesn't systematically favor slot 1; the pick is
+        mapped back to the original index.
+      - the verdict is accepted ONLY if the judge's thinking actually CLOSED
+        (</think> present) — an unclosed think block that hit max_tokens has
+        no verdict, and scanning it for a digit would grab a number from the
+        reasoning text. Take the LAST number after </think> (the final
+        answer), not the first.
+    """
+    rng = random.Random(seed)
+    order = list(range(len(candidates)))
+    rng.shuffle(order)
+    shown = [candidates[i] for i in order]
     cands = "\n\n".join(
         f"[Candidate {i + 1}]\n{strip_think(c['response_text'])[:JUDGE_MAX_CAND_CHARS]}"
-        for i, c in enumerate(candidates)
+        for i, c in enumerate(shown)
     )
     payload = {
         "model": model,
@@ -146,16 +162,20 @@ async def judge_pick(session, base_url, model, prompt, candidates, seed) -> int:
     try:
         data = await post_chat(session, base_url, payload)
         msg = data["choices"][0]["message"]
-        txt = strip_think((msg.get("content") or "") or (msg.get("reasoning_content") or ""))
-        m = re.search(r"\d+", txt)
-        if m:
-            pick = int(m.group()) - 1
-            if 0 <= pick < len(candidates):
-                return pick
-        print(f"[judge-fallback] unparseable verdict: {txt[:80]!r}", file=sys.stderr)
+        raw = (msg.get("content") or "") or (msg.get("reasoning_content") or "")
+        # Only trust a verdict whose thinking closed; else it's truncated.
+        if "</think>" in raw or "<think>" not in raw:
+            verdict = strip_think(raw)
+            nums = re.findall(r"\d+", verdict)
+            if nums:
+                shown_idx = int(nums[-1]) - 1   # last number = final verdict
+                if 0 <= shown_idx < len(shown):
+                    return order[shown_idx], True
+        print(f"[judge-fallback] unparseable/truncated verdict: {raw[:80]!r}",
+              file=sys.stderr)
     except Exception as e:  # noqa: BLE001
         print(f"[judge-fallback] {e}", file=sys.stderr)
-    return 0
+    return 0, False
 
 
 async def generate_one(session, sem, base_url, model, sample, best_of: int):
@@ -201,12 +221,12 @@ async def generate_one(session, sem, base_url, model, sample, best_of: int):
                     return None  # all candidates bad -> drop sample
                 # Rejection step 2: judge picks among survivors.
                 if len(clean) > 1:
-                    pick = await judge_pick(
+                    pick, judged = await judge_pick(
                         session, base_url, model, sample["prompt"], clean,
                         seed=gen_seed + 1_000_000,
                     )
                 else:
-                    pick = 0
+                    pick, judged = 0, True   # single survivor: nothing to judge
                 best = clean[pick]
                 return {
                     "sample_id": sample["sample_id"],
@@ -221,6 +241,7 @@ async def generate_one(session, sem, base_url, model, sample, best_of: int):
                     "gen_seed": gen_seed,
                     "bon_n": best_of,
                     "bon_pick": pick,
+                    "bon_judged": judged,   # False = judge fell back (audit)
                 }
             except Exception as e:  # noqa: BLE001
                 if attempt == MAX_RETRIES - 1:
