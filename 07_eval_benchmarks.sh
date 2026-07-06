@@ -33,6 +33,17 @@ for MODEL in "$@"; do
     --seed 42 \
     --output_path "${OUTDIR}/${NAME}" \
     --log_samples
+
+  # IFEval scores the RAW response against instructions; a think block fails
+  # them regardless of answer quality. Re-score on think-stripped responses
+  # (journal Discovery #6). Non-fatal: the raw lm-eval score is still written.
+  if echo "$TASKS" | grep -q ifeval; then
+    echo "-- IFEval think-stripped re-score for $NAME --"
+    python3 rescore_ifeval.py --samples "${OUTDIR}/${NAME}"/**/samples_ifeval_*.jsonl \
+      "${OUTDIR}/${NAME}"/samples_ifeval_*.jsonl 2>&1 \
+      | tee "${OUTDIR}/${NAME}_ifeval_thinkstripped.json" || \
+      echo "WARN: IFEval re-score failed; use raw score with the think-block caveat"
+  fi
 done
 
 echo "== Summary =="

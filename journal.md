@@ -163,11 +163,15 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
 
 1. Student leg completion → v0 benchmark deltas (the go/no-go evidence)
 2. ~~student_b thinking-format packer + thinking-aware eval configs~~
-   **DONE (code)**: packer now wraps teacher reasoning in the student's
-   native `<think>`/`</think>` (auto-detected from student vocab) with a
-   loud guard if the template strips it; `07_eval_benchmarks.sh` raises the
-   gen budget to 4096 + reasoning-mode sampling + 16k model len. Needs a
-   re-pack + re-benchmark run to produce the first trustworthy v0 delta.
+   **DONE (code)**: (a) packer wraps teacher reasoning in the student's
+   native `<think>`/`</think>` (auto-detected) with a loud strip-guard;
+   (b) eval gen budget 4096 + reasoning sampling + 16k len; (c) **IFEval
+   think-strip re-score** (`rescore_ifeval.py`, auto-run by 07) — raw IFEval
+   scores a think block as instruction-violating regardless of answer, so
+   the re-score on stripped responses is the trustworthy number. Staged
+   budget-gated runner `student_rebench.sh`: CPU re-pack + guard (free) →
+   base anchor ($5, must recover to known ability or STOP) → gated v0
+   retrain+bench ($20). Ready to run on a pod.
 3. **Generation-side judge/robustness fixes** (corpus_spec.md §"Generation-side
    fixes"): verdict parse anchored after `</think>` only, `bon_judged` audit
    column, randomized candidate order, judge head+tail truncation,
