@@ -151,6 +151,26 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
 
 ---
 
+## 2026-07-06 — Tier 3 prep: reviews + research
+
+- **Judge robustness fixes** (Open item 3, partial): unclosed-think verdicts
+  rejected, candidate order randomized, `bon_judged` column (commit bf31b41).
+- **Builder v2 validated** (~$2): all 6 slices populate; 2 dead source loaders
+  caught (oss_instruct repo gone, xlam gated) and swapped for verified
+  Magicoder-OSS + hermes-function-calling.
+- **Trustworthy v0 delta** (Discovery #7): distill transfers answer-format
+  discipline (GSM8K strict +48pts), mild IFEval dip — pilot-scale positive.
+- **Student-candidate research** (deep-research, 111 agents) → student_candidates.md:
+  logit-KD limited to GLM family; NEW option GLM-Z1-32B-0414 (dense 32B, MIT,
+  tokenizer-compat TBD); best sequence-KD = Qwen3-30B-A3B / 32B / 14B (Apache).
+- **Trace-recipe review** (43 agents) → trace_recipe_review.md. VERDICT:
+  YES-WITH-GAPS. Recipe is sound; 6 must-fix-first items before Tier-3 money:
+  R1 raise MAX_TOKENS + truncation telemetry; D3 add LiveCodeBench decontam;
+  R2 kept-rows floor + persisted per-slice funnel.json with drop reasons;
+  D1+D2 fix shipped mix (multi-turn/redistribute + real structured-output source);
+  R4 atomic MANIFEST write; R3 per-slice unmappable accounting (only if remap
+  student in scope). All are hours of code, no GPU.
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |
