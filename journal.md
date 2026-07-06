@@ -129,7 +129,23 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   `<think>` tags; the original packing already preserved format. The packer
   "fix" is a validated no-op for this corpus (kept for corpora that DO split
   reasoning). Net: the pilot's eval methodology was broken, not the data or
-  the model. v0-vs-base (trustworthy) pending the v0 re-benchmark.
+  the model.
+- **Discovery #7 — the first TRUSTWORTHY v0 delta (2026-07-06).** Base vs
+  v0 (GLM-5.2-distilled Qwen3-8B), both under the fixed eval config:
+    GSM8K flexible  0.919 -> 0.877  (-4.2, near ceiling, ~noise)
+    GSM8K strict    0.159 -> 0.636  (+47.7 !!)
+    IFEval p-strict 0.826 -> 0.734  (-9.2, think-stripped)
+    IFEval i-strict 0.880 -> 0.801  (-7.9)
+  Reading: the distill did NOT wash out. It strongly transferred the
+  teacher's answer-formatting discipline (GSM8K strict-match +48pts = the
+  student now emits clean, extractable final answers), at the cost of a mild
+  broad-instruction-following dip (IFEval -8pts) — expected from 1,140
+  samples of coding/math-heavy SFT with zero IFEval-style data. Raw math
+  capability held. This is a genuine positive signal at pilot scale: the
+  corpus transfers something real. Production (100-150k, the new mix with a
+  general/instruction slice) should lift IFEval instead of denting it.
+  Cost of the whole trustworthy re-run: ~$19 (staged; base anchor gated the
+  spend, and Stage 0 caught the packer misdiagnosis for free).
 - US-GA-2 stranded volume deleted (user call). Repo under git as of today.
 - Pod stopped. Balance at leg close: **$20.29**.
 
@@ -165,7 +181,7 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
 
 ## Open items
 
-1. Student leg completion → v0 benchmark deltas (the go/no-go evidence)
+1. ~~Student leg + trustworthy v0 deltas~~ DONE (Discovery #7): distill transfers answer-format discipline (+48pt GSM8K strict), mild IFEval dip expected at pilot scale.
 2. ~~student_b thinking-format packer + thinking-aware eval configs~~
    **DONE (code)**: (a) packer wraps teacher reasoning in the student's
    native `<think>`/`</think>` (auto-detected) with a loud strip-guard;
