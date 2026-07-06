@@ -363,9 +363,13 @@ def main():
     # dedup'd — coverage beats a perfectly-balanced-but-starved slice.
     n_backfill = {k: 0 for k in targets}
     for k in targets:
-        while len(kept[k]) < targets[k] and idx[k] < len(queues[k]):
-            item = queues[k][idx[k]]
-            idx[k] += 1
+        # Fresh scan from 0 (NOT the exhausted idx[k]): already-kept items are
+        # in exact_seen and get skipped; cap-skipped leftovers are NOT (they
+        # were `continue`d before exact_seen.add), so they get picked up here.
+        bf = 0
+        while len(kept[k]) < targets[k] and bf < len(queues[k]):
+            item = queues[k][bf]
+            bf += 1
             p = item["prompt"]
             h = hashlib.md5(norm(p).encode()).hexdigest()
             if (h in bench_exact
