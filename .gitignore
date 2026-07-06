@@ -28,3 +28,4 @@ env_*.lock.txt
 *_token*
 gate_result.json
 contamination_report.json
+runs/

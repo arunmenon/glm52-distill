@@ -16,6 +16,7 @@ Usage:
 import argparse
 import json
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -96,7 +97,7 @@ def main():
     # PREFLIGHT (idempotent)
     trials_f = run_dir / "trials.json"
     if not trials_f.exists():
-        subprocess.run(["python", "preflight.py", "--plan", args.plan,
+        subprocess.run([sys.executable, "preflight.py", "--plan", args.plan,
                         "--out", str(trials_f)], check=True)
     trials = json.loads(trials_f.read_text())["trials"]
 
@@ -106,6 +107,21 @@ def main():
     reason = guard(run_dir, plan, spent)
     if reason:
         raise SystemExit(f"HALTED before deploy: {reason}")
+
+    # "Don't start what you can't finish" (journal rule that saved ~$16):
+    # refuse to deploy unless the live balance covers the WHOLE remaining sweep
+    # plus the reserve — not merely clears the reserve.
+    projected = json.loads(trials_f.read_text()).get("projected_rung0_cost", 0)
+    projected += 3  # anchor
+    projected += plan["rung"]["keep_top"] * 6  # promotions to full
+    remaining = projected - spent
+    bal = runpod.balance()
+    if bal - plan["budget"]["reserve_usd"] < remaining:
+        raise SystemExit(
+            f"HALTED before deploy: balance ${bal:.2f} - reserve "
+            f"${plan['budget']['reserve_usd']} = ${bal - plan['budget']['reserve_usd']:.2f} "
+            f"< projected remaining ${remaining:.2f}. Top up or shrink the grid "
+            "(the conductor will not start a sweep it cannot finish).")
 
     # deploy (or reuse) the single student pod
     pod_id = args.pod_id
@@ -134,7 +150,7 @@ def main():
                   "--include 'contamination_report.json' 2>&1 | tail -1", timeout=1200)
     # on-pod dead-man: stop the pod after a wall-clock budget no matter what
     ssh(ip, port, f"cd /workspace/glm52-distill && RUNPOD_API_KEY=$(cat ~/.runpod/api_key 2>/dev/null) "
-                  f"nohup bash watchdog.sh 300 {pod_id} > watchdog.log 2>&1 & echo armed", timeout=60)
+                  f"setsid bash watchdog.sh 300 {pod_id} < /dev/null > watchdog.log 2>&1 & echo armed", timeout=30)
 
     # ANCHOR (mandatory quality floor)
     if "ANCHOR" not in done:
