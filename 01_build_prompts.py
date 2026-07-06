@@ -56,6 +56,14 @@ def _first_of(row, *fields):
     return ""
 
 
+def _hermes_first_user(row):
+    """First human/user turn from hermes-function-calling conversations."""
+    for m in row.get("conversations") or []:
+        if m.get("from") in ("human", "user"):
+            return m.get("value", "")
+    return ""
+
+
 def _tulu_general(row):
     """Tulu first user turn, EXCLUDING math/code/safety subsets (mix distortion
     + unaudited jailbreak prompts; corpus_spec.md)."""
@@ -79,8 +87,8 @@ SLICES = {
          lambda r: _first_of(r, "instruction", "question", "prompt"), 0.20),
         ("codefeedback", "m-a-p/CodeFeedback-Filtered-Instruction", None, "train",
          lambda r: _first_of(r, "query", "instruction"), 0.20),
-        ("oss_instruct", "bigcode/self-oss-instruct-sc2-exec-filter-500k", None, "train",
-         lambda r: _first_of(r, "instruction", "prompt"), 0.20),
+        ("magicoder_oss", "ise-uiuc/Magicoder-OSS-Instruct-75K", None, "train",
+         lambda r: r.get("problem", ""), 0.20),
         ("opencodeinstruct", "nvidia/OpenCodeInstruct", None, "train",
          lambda r: _first_of(r, "input", "instruction"), 0.20),
         ("codefeedback2", "m-a-p/Code-Feedback", None, "train",
@@ -96,8 +104,8 @@ SLICES = {
         ("tulu", "allenai/tulu-3-sft-mixture", None, "train", _tulu_general, 1.0),
     ]},
     "tool_calling": {"share": 0.05, "sources": [
-        ("xlam", "Salesforce/xlam-function-calling-60k", None, "train",
-         lambda r: _first_of(r, "query", "instruction"), 0.60),
+        ("hermes_fc", "NousResearch/hermes-function-calling-v1", None, "train",
+         lambda r: _hermes_first_user(r), 0.60),
         ("glaive", "glaiveai/glaive-function-calling-v2", None, "train",
          lambda r: _first_of(r, "question", "prompt", "system"), 0.60),
     ]},
