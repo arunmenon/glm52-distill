@@ -219,6 +219,29 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   watchdog dead-man. Exit criteria: reproduces Disc #7's +48pt GSM8K-strict
   unmanned, survives a mid-run conductor kill -9, watchdog self-stop fires.
 
+## 2026-07-22 — Agentic trajectory leg design (agentic_trajectory_design.md)
+
+- Assessment requested: is corpus diversity sufficient to distill a
+  frontier-class AGENTIC coder? Verdict NO: the corpus is single-turn only
+  (~0% trajectories, 0% env-verified coding, multi-turn slice at 0%); the
+  agentic loop (act/observe/recover) never appears in the data, so KD cannot
+  teach it. Confirmed absent from experiments.yaml + autoloop_design.md.
+- Designed the second program: teacher-as-agent (mini-swe-agent, bash-only)
+  over executable repo envs (SWE-Gym/Lite -> SWE-smith -> R2E-Gym +
+  SWE-rebench; all sources verified live), env-grounded verification
+  (double test-run + empty-diff rejection), per-step top-20 capture so
+  logit-KD survives, message-list pack with assistant-only loss mask (this
+  lands MULTITURN_READY as a side effect).
+- Split-plane constraint discovered: RunPod pods can't run Docker-in-Docker,
+  so envs need real VMs (GCP CPU or `static` provider); teacher stays the
+  scarce resource — CRAWL must co-schedule with the Tier-3 teacher window.
+- Cost basis from journal rates: ~$0.20-0.45/rollout, $0.6-1.5/verified
+  trajectory. CRAWL $150 cap (>=60 verified, Qwen3-8B plumbing proof);
+  WALK 1-2k verified on a 32B-class flagship (GLM-4.5-Air primary).
+  Honesty clause recorded: SFT/KD ceiling is "competent" (30-45% Verified
+  by precedent); frontier needs RL — leg stores reward-labeled rejects for
+  that future.
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |
@@ -272,7 +295,29 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
    hermes-function-calling-v1). Builder v2 validated end to end.
 6. Tier 3 decision: spec-validation teacher run (+$150–250)
 7. GCP production run (the goal; playbook complete)
-8. SECURITY, do now not later: rotate the HF token (it has traveled through
+8. Agentic trajectory leg (agentic_trajectory_design.md): build CRAWL
+   components (09_generate_trajectories.py, messages pack + loss mask, 04
+   multi-turn, SWE-bench-50 screen, decontam gate). 2026-07-22 update:
+   teacher for CRAWL = PUBLIC GLM-5.2 API (OpenRouter, ~25 providers,
+   $0.82/M in / $2.57/M out, 1M ctx; most expose top_logprobs; fp8
+   allowlist, pinned, no silent fallbacks) - kills the co-schedule-with-
+   Tier-3 constraint. SMOKE TEST DONE 2026-07-22 ($0.031,
+   endpoint_smoke.py): pinning honored, reasoning via `reasoning` field,
+   token-id round-trip 100%, caching YES everywhere (4-8x input discount);
+   logprobs are CONTENT-ONLY on all providers -> full-trace logit-KD needs
+   the selfhost rescore pass (or hybrid: answer-KD + reasoning-CE, no
+   rescore). Allowlist v1: StreamLake, GMICloud, Alibaba (Fireworks caps
+   top_logprobs at 5, sequence-only overflow). OpenRouter key stored in
+   gitignored .env.openrouter; passed through chat, rotate with HF token.
+   NEXT: env plane bring-up (GCP VM + docker + SWE-Gym-Lite images) then
+   the ~$5/10-task rehearsal. Task pool now governed by
+   trajectory_task_spec.md (2026-07-22): measured SWE-Gym skew (pandas 30%,
+   top-3 repos ~60%) -> per-repo cap <=12%; difficulty tiers from
+   gold-patch stats with adaptive N (2/4/6) + >=25%-hard verified quota +
+   pause-not-backfill guard; WALK task-type mix 50 bugfix / 20 mutation /
+   15 PR-mirror / 10 test-writing(inverted verifier) / degraded-statement
+   overlay ~15%; rehearsal upgraded to measure success rate BY TIER.
+9. SECURITY, do now not later: rotate the HF token (it has traveled through
    chat and multiple rented pods) — requires user action in HF settings.
    Decide the US-GA-2 volume ($3.50/day; worthless under the GLM-5.2-only
    strategy since that DC has no CUDA-13 hosts — recommend delete).

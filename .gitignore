@@ -29,3 +29,7 @@ env_*.lock.txt
 gate_result.json
 contamination_report.json
 runs/
+
+# Local secrets / smoke artifacts
+.env*
+endpoint_smoke_report.json
