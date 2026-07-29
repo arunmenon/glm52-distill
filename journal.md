@@ -260,6 +260,36 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
 - Standing convention: gap registry is living; post-CRAWL reviews must
   draw examples from REAL rollouts (audit sample), not hypotheticals.
 
+## 2026-07-29 — REHEARSAL COMPLETE: first 7 verified trajectories ($1.97)
+
+- 09_rehearsal.py on the local Mac (x86-emulated Docker, network-isolated
+  containers): 10 SWE-Gym-Lite tasks x N=2, GLM-5.2 via pinned OpenRouter
+  (StreamLake/GMICloud/Alibaba), mini-swe-agent 2.4.6 (NB: v2 defaults to
+  NATIVE TOOL-CALLING with a single bash tool — CRAWL data is already
+  FC-format, softening G1).
+- **Results: 7/20 rollouts verified (35%), 4/10 tasks. By tier (rollouts):
+  easy 2/6, medium 5/8, hard 0/6.** Mean ~31 steps. $0.092/rollout,
+  **$0.26/verified trajectory** (vs $0.6-1.5 estimated). Failure modes:
+  6 no-submission (step/wall limits), 7 tests_fail, 0 tampered,
+  0 apply_fail — mechanics clean, anti-tamper never tripped.
+- **Finding 1 (tier proxy partially inverted)**: medium(62%) > easy(33%).
+  Gold-patch size measures fix complexity, not diagnosis difficulty.
+  Recalibrate tiers with measured success per task spec sec 2.
+- **Finding 2 (hard tier 0/6)**: T4 concern confirmed at small n — at
+  CRAWL the >=25%-hard verified quota may be unreachable at N=6;
+  pause-not-backfill will trigger unless N-hard rises or tiers recalibrate.
+- **Finding 3 (ops)**: Docker Desktop VM disk (not host disk) is the
+  binding constraint — pulls fail at ~48GB; fixed by deleting sealed-task
+  images (image GC per task is REQUIRED in 09_generate for CRAWL).
+  3 MONAI tasks had no published image (preflight caught). Provider-side
+  stalls >300s exist (mini's 60s timeout patched to 300s in driver);
+  emulation inflates wall-time (dvc TimeExceeded artifact) — vanishes on
+  a real x86 VM.
+- CRAWL repricing at measured rates: 200 rollouts ~= $20 -> ~65-70
+  verified, right at target; $50 OpenRouter balance covers CRAWL 2x over.
+- Spend: $1.97 of $50 (incl. smoke test + credit-outage redo).
+  7 verified trajectories banked: moto x2, dask x2, mypy x3.
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |

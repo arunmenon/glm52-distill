@@ -1,0 +1,41 @@
+{
+  "date": "2026-07-29",
+  "model": "z-ai/glm-5.2",
+  "provider_pin": {
+    "order": [
+      "StreamLake",
+      "GMICloud",
+      "Alibaba"
+    ],
+    "allow_fallbacks": false
+  },
+  "n_tasks": 10,
+  "by_tier": {
+    "medium": {
+      "tasks": 4,
+      "verified": 3,
+      "rollouts": 8,
+      "successes": 5,
+      "cost": 0.738,
+      "mean_steps": 34.6
+    },
+    "hard": {
+      "tasks": 3,
+      "verified": 0,
+      "rollouts": 6,
+      "successes": 0,
+      "cost": 0.466,
+      "mean_steps": 30.3
+    },
+    "easy": {
+      "tasks": 3,
+      "verified": 1,
+      "rollouts": 6,
+      "successes": 2,
+      "cost": 0.638,
+      "mean_steps": 31.0
+    }
+  },
+  "total_rollout_cost_usd": 1.842,
+  "note": "local Mac x86-emulated Docker; network-isolated containers; N=2, step<=50, $0.80/rollout cap"
+}
