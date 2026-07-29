@@ -242,6 +242,24 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   by precedent); frontier needs RL — leg stores reward-labeled rejects for
   that future.
 
+## 2026-07-29 — Round-3 review: deployment representativeness (G1-G6)
+
+- Asked: are the trajectories representative of a WORLD-CLASS agentic
+  coder? Verdict: kernel only (~1/4-1/3 of deployed behavior mass).
+  Gap registry with mandatory concrete examples added to the design doc:
+  G1 harness grammar (sed/heredoc vs structured read/str_replace tools),
+  G2 teacher-as-ceiling (one model's habits; RL exceeds, SFT copies),
+  G3 work-type mix (issue->patch vs feature/diagnosis/refactor),
+  G4 pytest-only observations (no TS/npm/rust error vocabulary),
+  G5 no context management (and length cap drops longest trajectories),
+  G6 user silent after turn one.
+- DECISION: WALK format flipped — native tool-call trajectories become the
+  WALK backbone; bash-only stays for CRAWL and survives as a minority
+  robustness arm. Format A/B moved to WALK ENTRY. Harness-format is the
+  first breadth investment, ahead of multilingual (G4 second).
+- Standing convention: gap registry is living; post-CRAWL reviews must
+  draw examples from REAL rollouts (audit sample), not hypotheticals.
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |

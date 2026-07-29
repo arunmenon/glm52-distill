@@ -122,10 +122,17 @@ for v1 because:
    reproducible at eval/deploy time with the same harness; SWE-bench
    bash-only results are directly comparable.
 
-Deferred decision (WALK gate): whether to add a native function-calling
-trajectory flavor (OpenHands or SWE-agent tool schema) if the intended
-student deployment target requires structured tool calls. Do not mix formats
-within one training run.
+**Format decision UPDATED 2026-07-29 (round-3 review, G1):** native
+tool-call trajectories are the **WALK DEFAULT backbone**, not a maybe.
+Bash-only remains the CRAWL format (plumbing proof; fewest harness bugs)
+and survives into WALK only as a minority robustness flavor, trained as a
+separate ablation arm. Rationale: bash-only drills editing idioms
+(sed/heredoc rewrites) that are anti-patterns in the rich-tool harnesses a
+deployed agent ships into; the student would never have emitted the token
+patterns its runtime expects. WALK-entry work item: pick the FC harness
+(SWE-agent tool schema vs OpenHands) against GLM-5.2's native tool-call
+format, and A/B bash-only vs FC on the same task set before bulk
+generation. Rule unchanged: never mix formats within one training run.
 
 ## 3. Task sources (all verified live on HF, 2026-07-22)
 
@@ -307,9 +314,12 @@ don't-start-what-you-can't-finish guard applies per rollout batch).
 - SWE-Gym full + SWE-smith; 1-2k verified; flagship student; mix-ratio
   sweep under the conductor (trajectory leg becomes rows in
   experiments.yaml, same FSM, same ledger).
+- ENTRY: FC-harness pick (SWE-agent schema vs OpenHands vs GLM-native)
+  + bash-vs-FC A/B on a shared task set; FC is the backbone unless the
+  A/B contradicts it (round-3 G1).
 - EXIT: flagship student beats its base anchor by a stable, reproduced
-  margin on the 50-subset; funnel + realized-source-mix healthy; format
-  decision (bash-only vs +native-FC) made from data.
+  margin on the 50-subset; funnel + realized-source-mix healthy;
+  bash-only robustness arm sized from the A/B.
 
 **RUN (production, GCP playbook)**
 - 5-10k verified, R2E-Gym + SWE-rebench diversity, full-500 eval on final
@@ -340,7 +350,63 @@ frontier-diverse agentic corpus. Ranked:
 - **T6 (deferred, RUN/RL-era)**: no mid-trajectory user turns (interrupts,
   scope changes, clarifying questions). No v1 source provides it.
 
-Angles that were MISSING until this review:
+### Round 3 (2026-07-29): deployment representativeness, WITH examples
+
+Question asked: are these trajectories representative for a WORLD-CLASS
+agentic coding model? Verdict: they cover the KERNEL (edit-run-observe-
+recover on real code, verified), roughly a quarter to a third of the
+deployed behavior distribution. Gap registry, each with a concrete
+behavioral example (convention: every gap entry MUST carry one; see note
+at the end of this section):
+
+- **G1 (fixed in section 2): harness grammar was the WRONG grammar, not
+  just one grammar.** Corpus teaches `sed -i 's/old/new/' file.py` and
+  cat-piping; deployed harnesses expect `[read_file lines=120-180]` +
+  `[str_replace old=... new=...]`. Different token patterns AND different
+  decision policy ("grep -rn everything" vs "targeted read"). ->
+  Native-FC is now the WALK backbone; bash-only demoted to robustness
+  flavor. First breadth investment, AHEAD of multilingual.
+- **G2 (structural, RL-era): teacher is the ceiling, and one personality.**
+  If GLM-5.2's habit on a failing test is "patch the traceback line" and
+  it never writes a reproduction script first, the corpus contains zero
+  examples of repro-first debugging, at any volume. Rejection sampling
+  buys quality, not strategy diversity. SFT converges to "a smaller
+  GLM-5.2"; exceeding the teacher is the reward-labeled reject store's
+  job (RL/DPO).
+- **G3 (= T1 sharpened): work-type mix vs reality.** Corpus shape is
+  always "well-written issue -> make hidden tests pass." Deployed
+  majority: "Add CSV export to the reports page" (agent defines done),
+  "Why does login sometimes take 10s?" (deliverable is a diagnosis),
+  "Clean up this module" (success = behavior NOT changing). Fail-to-pass
+  structurally admits only the first. WALK claws back some (PR-mirror,
+  test-writing, degraded statements); scope-deciding is still absent.
+- **G4 (= T2 sharpened): observation monoculture.** Corpus error surface
+  is pytest tracebacks only. Deployed agents equally read
+  `TS2345: Argument of type 'string | undefined'...`, `npm ERR! peer dep
+  missing`, `error[E0502]: cannot borrow...` - each with its own recovery
+  vocabulary (the npm fix starts in package.json/lockfile, a file type
+  the corpus never opens). Invisible on our own eval because Verified is
+  Python too. Second breadth investment (multilingual, WALK+).
+- **G5 (= long-horizon, RUN/RL-era): no context management.** 32k window
+  + linear history means the teacher never summarizes ("noted:
+  AuthMiddleware validates in _verify(), moving on"), never keeps a plan,
+  never re-orients from notes; and the length cap preferentially DROPS
+  the longest trajectories (T4 interaction). Quotas + per-tier drop
+  telemetry mitigate; real compaction behavior needs purpose-built long
+  tasks.
+- **G6 (= T6): the user never speaks after turn one.** No mid-task
+  "actually per-org limits, not per-user, and don't touch billing," no
+  learned when-to-ask. Candidate mechanism for RUN: scripted user
+  injecting a constraint change mid-rollout.
+
+**Convention (standing): the gap registry is LIVING.** Every review round
+appends here with concrete examples; every gap carries an ID, a status
+(fixed / staged-WALK / staged-RUN / RL-era), and the example that makes it
+legible. Once CRAWL produces real trajectories, examples MUST be drawn
+from actual rollouts (the audit sample), not hypotheticals - reviews then
+happen at every phase boundary (post-CRAWL, post-WALK) against real data.
+
+Angles that were MISSING until round 2's review:
 - **Test-tampering / reward hacking (MUST-FIX, now in section 4)**: gold
   test re-apply + reject test-file diffs + LLM spot-AUDIT of a sample of
   passing diffs (judge as auditor, not selector).
