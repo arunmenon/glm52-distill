@@ -290,6 +290,27 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
 - Spend: $1.97 of $50 (incl. smoke test + credit-outage redo).
   7 verified trajectories banked: moto x2, dask x2, mypy x3.
 
+## 2026-07-30 — CRAWL components: pack + gate + image GC
+
+- **03b_pack_trajectories.py (MULTITURN_READY lands)**: canonical
+  student-agnostic pack — cleaned message lists (system/user/assistant/
+  tool; API debris + mini's synthetic `exit` role stripped; tool-call
+  linkage validated; must end on assistant turn), loss-mask contract
+  = assistant turns only, format id fc_bash_v1 (never mix formats).
+  All 7 verified rehearsal trajectories packed: real-GLM-tokenizer
+  min/mean/max = 11.7k/17.4k/29.5k tokens, 0 over the 32k cap.
+  -> packed/trajectories/trajectories_v0.parquet + committable
+  trajectory_pack_report.json. Student chat-templating deferred to 04.
+- **trajectory_decontam.py**: 3-level hard gate (instance / repo / text
+  exact+8-gram containment) vs SWE-bench Verified. Rehearsal task list:
+  CLEAN at all levels (trajectory_gate.json).
+- **09_rehearsal.py image GC**: rmi after task seal (Docker Desktop VM
+  disk was the binding constraint; two incidents on 2026-07-29).
+- TODO next: 04 multi-turn training path consuming fc_bash_v1 (chat
+  template + loss mask), then CRAWL run (~$20 at measured rates, on a
+  real x86 VM to shed emulation tax); push trajectories_v0.parquet to
+  the HF store AFTER the token rotation (open item 9).
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |

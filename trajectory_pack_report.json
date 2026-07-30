@@ -1,0 +1,25 @@
+{
+  "date": "2026-07-30",
+  "format": "fc_bash_v1",
+  "loss_mask_convention": "trainable=assistant turns only",
+  "funnel": {
+    "tasks": 10,
+    "rollouts": 20,
+    "verified": 7,
+    "packed": 7,
+    "over_cap": 0,
+    "clean_errors": 0
+  },
+  "by_tier": {
+    "easy": 2,
+    "medium": 5
+  },
+  "token_stats": {
+    "min": 11739,
+    "mean": 17418,
+    "max": 29494,
+    "cap": 32768,
+    "tokenizer": "glm52"
+  },
+  "output": "packed/trajectories/trajectories_v0.parquet"
+}

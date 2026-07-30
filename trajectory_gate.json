@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-30",
+  "task_list": "runs/rehearsal/rehearsal_tasks.json",
+  "n_tasks": 10,
+  "against": "princeton-nlp/SWE-bench_Verified (500 instances)",
+  "checks": {
+    "instance_ids": 0,
+    "repo_overlap": 0,
+    "text_exact": 0,
+    "text_ngram": 0
+  },
+  "hits": {},
+  "verdict": "CLEAN"
+}

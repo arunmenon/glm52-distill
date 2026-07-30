@@ -343,6 +343,11 @@ def run():
             r["verify"].get("verified") for r in task_result["rollouts"])
         ledger.write_text(json.dumps(task_result, indent=2))
         print(f"TASK {iid}: verified={task_result['task_verified']}")
+        # image GC after seal: Docker Desktop's VM disk is the binding
+        # constraint (two pull-failure incidents, 2026-07-29); images are
+        # re-pullable, sealed tasks never need theirs again
+        subprocess.run(["docker", "rmi", image_name(iid)],
+                       capture_output=True)
     report()
 
 
