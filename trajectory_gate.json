@@ -1,7 +1,7 @@
 {
   "date": "2026-07-30",
-  "task_list": "runs/rehearsal/rehearsal_tasks.json",
-  "n_tasks": 10,
+  "task_list": "/Users/arunmenon/projects/glm52-distill/runs/crawl/crawl_tasks.json",
+  "n_tasks": 50,
   "against": "princeton-nlp/SWE-bench_Verified (500 instances)",
   "checks": {
     "instance_ids": 0,
