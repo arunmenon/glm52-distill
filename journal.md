@@ -306,10 +306,21 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   CLEAN at all levels (trajectory_gate.json).
 - **09_rehearsal.py image GC**: rmi after task seal (Docker Desktop VM
   disk was the binding constraint; two incidents on 2026-07-29).
-- TODO next: 04 multi-turn training path consuming fc_bash_v1 (chat
-  template + loss mask), then CRAWL run (~$20 at measured rates, on a
-  real x86 VM to shed emulation tax); push trajectories_v0.parquet to
-  the HF store AFTER the token rotation (open item 9).
+- **03c_build_multiturn_dataset.py (train-side bridge, DONE same day)**:
+  fc_bash_v1 -> 04's exact dataset contract (input_ids + labels, -100
+  masked), so 04 trains multi-turn WITH ZERO CHANGES (SFT path).
+  Explicit ChatML rendering, NOT apply_chat_template — inference
+  templates strip reasoning from historical turns; teacher ran with
+  interleaved thinking preserved, student must train the same way
+  (deployment note: student harness must resend prior reasoning).
+  Atomic-tag boundary asserts; task-level split (rollouts never straddle
+  splits). 7 rows -> Qwen3 tokens 11.6k-28.9k, 0 dropped, trainable
+  fraction 36.4%; spot-check decode = think+tool_call spans only.
+  GLM-family rendering lands at WALK.
+- TODO next: 30/70 blend assembly at train time (dataset concat, small),
+  then CRAWL run (~$20 at measured rates, real x86 VM); push
+  trajectories_v0.parquet + mt_qwen3 to HF store AFTER token rotation
+  (open item 9). Train-time seq len 29k: check pod memory headroom.
 
 ## Money ledger (RunPod, cumulative)
 
