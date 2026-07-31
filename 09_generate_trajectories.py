@@ -200,7 +200,9 @@ def run():
         if cost > PHASE_COST_CAP_USD:
             sys.exit(f"PHASE COST CAP: ${cost:.2f} > ${PHASE_COST_CAP_USD}")
         h_roll, h_ver = hard_stats()
-        if (h_roll >= HARD_PAUSE_MIN_ROLLOUTS
+        if ((CRAWL_DIR / "hard_decision.json").exists()
+                is False
+                and h_roll >= HARD_PAUSE_MIN_ROLLOUTS
                 and h_ver / h_roll < HARD_PAUSE_RATE):
             sys.exit(f"PAUSED_HUMAN: hard-tier verified {h_ver}/{h_roll} "
                      f"< {HARD_PAUSE_RATE:.0%} - mix decision needed "
@@ -242,7 +244,7 @@ def run():
         ledger.write_text(json.dumps(task_result, indent=2))
         print(f"TASK {iid}: verified={task_result['task_verified']} "
               f"({n_verified} rollouts)")
-        subprocess.run(["docker", "rmi", R.image_name(iid)],
+        subprocess.run(["docker", "rmi", "-f", R.image_name(iid)],
                        capture_output=True)
     report()
 

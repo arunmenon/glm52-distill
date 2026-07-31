@@ -322,6 +322,26 @@ User funded $250 with a strict cost mandate. Deployed 8× H200 (US-GA-2).
   trajectories_v0.parquet + mt_qwen3 to HF store AFTER token rotation
   (open item 9). Train-time seq len 29k: check pod memory headroom.
 
+## 2026-07-31 — CRAWL: hard-tier guard fired, human decision recorded
+
+- PAUSED_HUMAN tripped exactly per spec: hard tier 0/30 verified rollouts,
+  having consumed $6.82 of $10.95 total. Failure autopsy (evidence, not
+  theory): (1) hydra near-miss x6 — same wrong fix every rollout, G2
+  teacher-ceiling made flesh; (2) pandas class = ENVIRONMENT TAX — C
+  rebuilds per test under x86 emulation eat the 50-step/40-min budget
+  (11/12 rollouts died no-submission; 1 failed on a ninja build error,
+  not tests); (3) tier proxy selected compiled test-heavy repos into
+  hard, compounding both.
+- DECISION (user): finish easy+medium on Mac (~13-16 verified projected);
+  DEFER 5 remaining hard tasks to WALK on real x86 VM with raised budgets
+  (80 steps / 90 min). Deferral ledgers + hard_decision.json written;
+  guard stands down when a decision file exists. Yield target >=60 will
+  NOT be met by CRAWL — accepted: CRAWL's purpose (prove pipeline,
+  measure funnel) is achieved; volume is WALK's job on real infra.
+- Measured so far: easy $0.20/verified, medium $1.18/verified, overall
+  10-11% rollout verify rate (vs 35% rehearsal — full-set medium/hard
+  mix shift + emulation).
+
 ## Money ledger (RunPod, cumulative)
 
 | Deposit | Amount |
