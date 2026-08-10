@@ -1,0 +1,115 @@
+{
+  "date": "2026-08-01",
+  "phase": "CRAWL",
+  "model": "z-ai/glm-5.2",
+  "provider_pin": {
+    "order": [
+      "StreamLake",
+      "GMICloud",
+      "Alibaba"
+    ],
+    "allow_fallbacks": false
+  },
+  "tasks_done": 49,
+  "funnel": {
+    "medium": {
+      "tasks": 20,
+      "tasks_verified": 4,
+      "rollouts": 41,
+      "rollouts_verified": 6,
+      "cost_usd": 6.15,
+      "pull_failed": 9,
+      "repos": {
+        "bokeh/bokeh": [
+          2,
+          0
+        ],
+        "dask/dask": [
+          3,
+          1
+        ],
+        "iterative/dvc": [
+          5,
+          1
+        ],
+        "modin-project/modin": [
+          5,
+          0
+        ],
+        "pydantic/pydantic": [
+          3,
+          2
+        ],
+        "python/mypy": [
+          2,
+          0
+        ]
+      }
+    },
+    "easy": {
+      "tasks": 19,
+      "tasks_verified": 4,
+      "rollouts": 16,
+      "rollouts_verified": 4,
+      "cost_usd": 1.47,
+      "pull_failed": 9,
+      "repos": {
+        "conan-io/conan": [
+          1,
+          0
+        ],
+        "facebookresearch/hydra": [
+          4,
+          0
+        ],
+        "getmoto/moto": [
+          6,
+          3
+        ],
+        "iterative/dvc": [
+          1,
+          0
+        ],
+        "pydantic/pydantic": [
+          3,
+          1
+        ],
+        "python/mypy": [
+          4,
+          0
+        ]
+      }
+    },
+    "hard": {
+      "tasks": 10,
+      "tasks_verified": 0,
+      "rollouts": 30,
+      "rollouts_verified": 0,
+      "cost_usd": 6.82,
+      "pull_failed": 5,
+      "repos": {
+        "conan-io/conan": [
+          3,
+          0
+        ],
+        "dask/dask": [
+          1,
+          0
+        ],
+        "facebookresearch/hydra": [
+          1,
+          0
+        ],
+        "pandas-dev/pandas": [
+          5,
+          0
+        ]
+      }
+    }
+  },
+  "verified_total": 10,
+  "cost_total_usd": 14.44,
+  "cost_per_verified_usd": 1.444,
+  "hard_share_of_verified": 0.0,
+  "quota_note": ">=25% hard target (trajectory_task_spec sec 3)"
+}
