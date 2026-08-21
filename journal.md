@@ -451,3 +451,32 @@ teacher for the agentic trajectory leg, replacing z-ai/glm-5.2.
 - NEXT: ~$5 tiered rehearsal (esp. hard tier, where GLM-5.2 went 0/30) to
   compare verified yield + cost-per-verified vs CRAWL baseline $1.44
   before committing WALK to the new teacher.
+
+## 2026-08-21 (later) — Rescore validated, student locked, staged plan approved
+
+- **Student = Qwen/Qwen3.5-9B (user-confirmed).** Same 248k vocab as the
+  Qwen3.8 teacher (gate: remap, 7 audio-only specials, zero id mismatches)
+  -> full logit KD viable. No small Qwen3.8 sibling exists.
+- **09c rescore pass VALIDATED** on Vast RTX PRO 6000 (~$0.87/hr, on-demand
+  after an interruptible box was outbid and a 27GB-disk box filled): 3
+  verified rehearsal trajectories scored, top-20 full trace incl. reasoning,
+  coverage 1.0. Fidelity: teacher self-perplexity 1.209, rank-1 agreement
+  93.3% -> chat-template render (preserve_thinking + BASH_TOOL schema) is
+  faithful. Shards in HF store rescore_shards/rehearsal. Six integration
+  bugs fixed en route (see commit 48a83c9).
+- **Rehearsal (Qwen3.8 teacher, same frozen 10 tasks)**: 6/10 sealed —
+  moto 2/2 verified (easy), **pandas-48106 verified (hard — first hard
+  verification ever; GLM-5.2 was 0/30 on hard in CRAWL)**; pydantic, dvc,
+  hydra x2 failed. mypy x2 + modin in flight. Two parallel workers.
+- **Qwen3.5-9B anchor benchmark** (ifeval + gsm8k_cot, thinking-aware
+  07_eval_benchmarks settings) running on the same box after the rescore.
+- **Approved staged plan**: rehearsal verdict -> WALK 95 tasks on x86 VM
+  (mix per trajectory_task_spec; also kills the emulation tax measured at
+  ~35 min/task local) -> student v0 SFT(+KD) + held-out screen -> transfer
+  delta gates RUN-phase corpus (~300-500 verified, mutation-weighted for
+  controlled hard-tier difficulty). Failed rollouts to be kept as DPO
+  chosen/rejected pairs (zero marginal cost). Rationale: diversity-first
+  (repo caps, task-type mix, degraded statements) beats raw count; for RL
+  the durable asset is tasks+verifiers, not teacher tokens.
+- Credential rotation list: HF token + Vast API key (both traveled through
+  chat).
