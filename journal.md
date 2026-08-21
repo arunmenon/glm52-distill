@@ -480,3 +480,26 @@ teacher for the agentic trajectory leg, replacing z-ai/glm-5.2.
   the durable asset is tasks+verifiers, not teacher tokens.
 - Credential rotation list: HF token + Vast API key (both traveled through
   chat).
+
+## 2026-08-22 — Rehearsal SEALED (10/10): tier verdict Qwen3.8 vs GLM-5.2
+
+Same frozen 10 tasks, N=2, identical harness/verifier. Ledger totals:
+
+| tier   | Qwen3.8 tasks | Qwen3.8 rollouts_v | GLM tasks | GLM rollouts_v |
+|--------|---------------|--------------------|-----------|----------------|
+| easy   | 1/3           | 2                  | 1/3       | 2              |
+| medium | 2/4           | 3                  | 3/4       | 5              |
+| hard   | **1/3**       | **1**              | 0/3       | 0              |
+| total  | 4/10          | 6 ($10.82 ledger)  | 4/10      | 7 ($1.85)      |
+
+Read: GLM is 6-8x cheaper per verified rollout (short trajectories) and
+slightly better on medium; **Qwen3.8 is the only teacher that verifies
+hard tasks** (GLM: 0/33 hard attempts across rehearsal+CRAWL). The >=25%-
+hard verified quota is the design's binding constraint -> teacher swap
+VALIDATED for the quota, at a real cost premium (~$1.80/verified vs
+$0.28). WALK pricing set accordingly (bugfix slice cap $75).
+Ops burn beyond ledger: ~$2.7 (DNS-hang redo, harness 1h bg-task kills,
+Docker-disk pull failures — all engineered around: detached workers,
+babysitter, ledger watcher, WALK VM with 284GB image cache).
+Orchestrator now: batch rescore (dask r2, mypy r1+r2 + any stragglers)
+on rented GPU + decontam-gated WALK bugfix-slice launch on the VM.
