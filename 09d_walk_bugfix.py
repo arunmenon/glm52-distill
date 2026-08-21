@@ -102,7 +102,8 @@ def select_tasks():
             # every field the rollout/verify machinery reads, plus gold
             # patch context; FAIL_TO_PASS/PASS_TO_PASS are what verify()
             # replays — dropping them crashed the first WALK launch.
-            keep = {k: row[k] for k in
+            keep = {k: (row[k].tolist() if hasattr(row[k], "tolist")
+                        else row[k]) for k in
                     ("instance_id", "repo", "problem_statement",
                      "base_commit", "patch", "test_patch", "version",
                      "FAIL_TO_PASS", "PASS_TO_PASS")
