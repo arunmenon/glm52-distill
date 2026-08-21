@@ -99,9 +99,13 @@ def select_tasks():
             if not R.image_exists_on_hub(row["instance_id"]):
                 print(f"  preflight MISS: {row['instance_id']}")
                 continue
+            # every field the rollout/verify machinery reads, plus gold
+            # patch context; FAIL_TO_PASS/PASS_TO_PASS are what verify()
+            # replays — dropping them crashed the first WALK launch.
             keep = {k: row[k] for k in
                     ("instance_id", "repo", "problem_statement",
-                     "base_commit", "patch", "test_patch", "version")
+                     "base_commit", "patch", "test_patch", "version",
+                     "FAIL_TO_PASS", "PASS_TO_PASS")
                     if k in row}
             keep["tier"] = tier
             chosen.append(keep)
