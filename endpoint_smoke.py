@@ -2,17 +2,17 @@
 """Public-endpoint smoke test for the agentic trajectory leg.
 
 Answers the open questions in agentic_trajectory_design.md section 1a, per
-candidate provider serving z-ai/glm-5.2 on OpenRouter:
+candidate provider serving the teacher model (env TEACHER_MODEL) on OpenRouter:
 
   1. PINNING     provider.order + allow_fallbacks=false actually pins?
   2. REASONING   thinking returned, and via which field?
   3. LOGPROBS    top-20 returned? do they cover reasoning tokens or only the
                  answer channel? (decides logit-KD via API vs rescore pass)
-  4. TOKEN IDS   do logprob token strings round-trip to single GLM-5.2 ids?
+  4. TOKEN IDS   do logprob token strings round-trip to single teacher ids?
   5. CACHING     does a repeated long prefix earn a cache-read discount?
 
 Usage:
-  OPENROUTER_API_KEY=... [GLM_TOKENIZER_JSON=path] python3 endpoint_smoke.py
+  OPENROUTER_API_KEY=... [TEACHER_TOKENIZER_JSON=path] python3 endpoint_smoke.py
   (key falls back to .env.openrouter next to this script)
 
 Writes endpoint_smoke_report.json (gitignored). Budget: well under $1; the
@@ -27,9 +27,11 @@ import urllib.error
 import urllib.request
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "z-ai/glm-5.2"
-# fp8-or-better + top_logprobs=true per the 2026-07-22 endpoint survey
-PROVIDERS = ["StreamLake", "GMICloud", "Fireworks", "Alibaba"]
+MODEL = os.environ.get("TEACHER_MODEL", "qwen/qwen3.8-27b")
+# fp8-or-better + top_logprobs=true per the 2026-08-21 endpoint survey
+# (Io Net excluded: 65k ctx too small for agentic rollouts)
+PROVIDERS = os.environ.get("TEACHER_PROVIDERS",
+                           "Parasail,Reka,AkashML,Alibaba").split(",")
 COST_ABORT_USD = 2.0
 
 REPORT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -56,7 +58,7 @@ API_KEY = load_api_key()
 
 
 def load_tokenizer():
-    path = os.environ.get("GLM_TOKENIZER_JSON", "")
+    path = os.environ.get("TEACHER_TOKENIZER_JSON", "")
     if not path or not os.path.exists(path):
         return None
     try:

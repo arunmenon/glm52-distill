@@ -421,3 +421,33 @@ wars & incidents, ~$15 storage/misc — plus the student leg (in progress,
    chat and multiple rented pods) — requires user action in HF settings.
    Decide the US-GA-2 volume ($3.50/day; worthless under the GLM-5.2-only
    strategy since that DC has no CUDA-13 hosts — recommend delete).
+
+## 2026-08-21 — Teacher swap: GLM-5.2 -> Qwen3.8-27B (trajectory leg)
+
+Decision (user): use Qwen/Qwen3.8-27B (released 2026-08-05, dense 27B,
+apache-2.0, thinking-on-by-default with reasoning_effort control) as the
+teacher for the agentic trajectory leg, replacing z-ai/glm-5.2.
+
+- **Tokenizer gate vs Qwen3-8B student: `none`.** Qwen3.8 moved to a 248k
+  vocab (old family 151k); 47% teacher vocab unmappable, 131k shared tokens
+  changed ids. No logit-KD, no remap. Costs nothing in practice: the qwen3
+  student leg was already SFT-level distillation and trajectories are
+  verified-then-retokenized by the packer. No small Qwen3.8 sibling exists
+  (family = 27B + 2.4T-A95B) so a same-tokenizer student is not an option.
+- **Endpoint smoke 2026-08-21 ($0.027)**: 7 OpenRouter providers; 4 meet
+  fp8-or-better + top_logprobs (Parasail, Reka, AkashML, Alibaba; Io Net
+  excluded 65k ctx; Chutes/Venice no logprobs). All 4 pin correctly and
+  return reasoning via `reasoning`. Logprobs CONTENT-ONLY everywhere
+  (same as GLM-5.2; moot given gate=none). **Only Parasail caches**
+  (6272/6358 warm prompt tokens) -> allowlist order Parasail, Reka,
+  AkashML, no fallbacks. Alibaba dropped (top_logprobs capped at 5,
+  priciest input). Pricing $0.45/M in, $3.20/M out vs GLM-5.2
+  $0.82/$2.57 — input-dominated rollouts get cheaper.
+- Model card claims (Claude Code harness, not ours): SWE-bench Pro 61.7,
+  Terminal Bench 2.1 73.0, LCB v6 90.3. Treat as priors only.
+- endpoint_smoke.py parameterized (TEACHER_MODEL / TEACHER_PROVIDERS /
+  TEACHER_TOKENIZER_JSON); 09_rehearsal.py MODEL_NAME + PROVIDER_PIN
+  flipped (09_generate_trajectories inherits).
+- NEXT: ~$5 tiered rehearsal (esp. hard tier, where GLM-5.2 went 0/30) to
+  compare verified yield + cost-per-verified vs CRAWL baseline $1.44
+  before committing WALK to the new teacher.

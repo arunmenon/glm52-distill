@@ -2,7 +2,8 @@
 """Trajectory-leg rehearsal (trajectory_task_spec.md section 6, REHEARSAL).
 
 10 SWE-Gym-Lite tasks stratified by difficulty tier (gold-patch stats) across
->=6 repos, N=2 rollouts each: GLM-5.2 via pinned OpenRouter providers driving
+>=6 repos, N=2 rollouts each: the teacher (MODEL_NAME) via pinned OpenRouter
+providers driving
 mini-swe-agent (native bash-tool format) against local Docker (x86 emulation
 on Apple silicon). Environment verification per agentic_trajectory_design.md
 section 4: anti-tamper (reject test-file diffs), gold test re-apply, double
@@ -50,8 +51,12 @@ CMD_TIMEOUT_S = 120            # per agent command (emulation is slow)
 VERIFY_TIMEOUT_S = 1800        # per verification pytest run
 P2P_CAP = 15                   # max pass-to-pass tests run (time)
 
-MODEL_NAME = "z-ai/glm-5.2"
-PROVIDER_PIN = {"order": ["StreamLake", "GMICloud", "Alibaba"],
+# Teacher swap 2026-08-21: Qwen3.8-27B (dense 27B, apache-2.0). Tokenizer gate
+# vs Qwen3-8B student = none (248k vs 151k vocab) -> SFT-only leg, unchanged.
+# Allowlist from endpoint_smoke 2026-08-21: all pin, reasoning field OK,
+# fp8+, ctx>=262k; Parasail first (only provider with prompt caching).
+MODEL_NAME = "qwen/qwen3.8-27b"
+PROVIDER_PIN = {"order": ["Parasail", "Reka", "AkashML"],
                 "allow_fallbacks": False}
 
 TEST_PATH_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*$|_test\.py$")
