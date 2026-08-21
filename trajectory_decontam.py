@@ -26,9 +26,8 @@ GATE_FILE = REPO_DIR / "trajectory_gate.json"
 VERIFIED_PARQUET = ("https://huggingface.co/datasets/princeton-nlp/"
                     "SWE-bench_Verified/resolve/main/data/test-00000-of-"
                     "00001.parquet")
-CACHE = Path("/private/tmp/claude-501/-Users-arunmenon-projects-glm52-distill/"
-             "ad896283-5c39-4a76-bdab-80daf2f812f4/scratchpad/"
-             "swebench_verified.parquet")
+# cache next to the repo scripts: portable across machines/sessions
+CACHE = REPO_DIR / "walk_scratch" / "swebench_verified.parquet"
 NGRAM = 8
 CONTAINMENT_THRESHOLD = 0.6
 
