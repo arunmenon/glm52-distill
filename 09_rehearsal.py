@@ -203,8 +203,8 @@ def rollout(instance: dict, idx: int, out_dir: Path) -> dict:
 
     _patch_api_timeout()
 
-    stock = yaml.safe_load((Path(sys.prefix) / "lib" / "python3.12" /
-                            "site-packages" / "minisweagent" / "config" /
+    import minisweagent
+    stock = yaml.safe_load((Path(minisweagent.__file__).parent / "config" /
                             "benchmarks" / "swebench.yaml").read_text())
     model = OpenRouterModel(
         model_name=MODEL_NAME,
