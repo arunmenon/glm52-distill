@@ -182,16 +182,35 @@ API_TIMEOUT_S = 300  # library hardcodes 60s; long GLM thinking steps exceed it
 def _patch_api_timeout():
     """mini-swe-agent's OpenRouterModel passes timeout=60 to requests.post;
     long thinking steps time out and the retry double-bills the generation.
-    Shim the module's `requests` so every post uses API_TIMEOUT_S."""
+    Shim the module's `requests` so every post uses API_TIMEOUT_S.
+
+    Self-hosted teacher: when TEACHER_BASE_URL is set (an OpenAI-compatible
+    /v1/chat/completions endpoint, e.g. vLLM serving the teacher), the shim
+    redirects every request there, swaps auth to TEACHER_API_KEY, and strips
+    OpenRouter-only body fields (provider pin). The vLLM server must use
+    --served-model-name matching MODEL_NAME so no rename is needed."""
+    import os
     import types
 
     import requests as real_requests
 
     from minisweagent.models import openrouter_model as orm
 
-    def post_with_timeout(*args, **kwargs):
+    teacher_url = os.environ.get("TEACHER_BASE_URL")
+    teacher_key = os.environ.get("TEACHER_API_KEY")
+
+    def post_with_timeout(url, *args, **kwargs):
         kwargs["timeout"] = API_TIMEOUT_S
-        return real_requests.post(*args, **kwargs)
+        if teacher_url:
+            url = teacher_url
+            body = kwargs.get("json")
+            if isinstance(body, dict):
+                body.pop("provider", None)
+            if teacher_key:
+                headers = dict(kwargs.get("headers") or {})
+                headers["Authorization"] = f"Bearer {teacher_key}"
+                kwargs["headers"] = headers
+        return real_requests.post(url, *args, **kwargs)
 
     orm.requests = types.SimpleNamespace(
         post=post_with_timeout, exceptions=real_requests.exceptions)
