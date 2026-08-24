@@ -503,3 +503,34 @@ Docker-disk pull failures — all engineered around: detached workers,
 babysitter, ledger watcher, WALK VM with 284GB image cache).
 Orchestrator now: batch rescore (dask r2, mypy r1+r2 + any stragglers)
 on rented GPU + decontam-gated WALK bugfix-slice launch on the VM.
+
+## 2026-08-24 — INCIDENT: WALK bugfix slice data lost with reclaimed VM
+
+The WALK VM (Vast 48325566) exited overnight ~04:00 and was reclaimed by
+the host before its queued restart could run. Every stopped-instance
+recovery path failed (start: queued forever; vastai copy: "Invalid
+src_id" even VM->VM; execute: 404). 44 sealed ledgers incl. 24 verified
+trajectories ($66.73 API spend) existed only on that disk. LOST.
+
+**What survives:** all code + frozen-selection determinism (seed 42 ->
+same 48 tasks on re-select), rehearsal-era corpus + 6 KD shards (HF
+store), anchors, and the FUNNEL KNOWLEDGE from the run:
+
+| tier   | verified/sealed | notes |
+|--------|-----------------|-------|
+| easy   | 11/19 (58%)     | moto/mypy/pydantic convert; hydra/conan/dvc resist |
+| medium | 12/19 (63%)     | 3x CRAWL-era rate; several 2/2-rollout verifieds |
+| hard   | 1/6 (17%)       | pandas-50714 verified r3 @$4.80; 4 unsealed at credit-out |
+
+~$1.90/verified task-level; repo >> tier as difficulty predictor; per-repo
+caps vindicated (dask $10 -> 2 verified late, hydra $0 conversions).
+
+**Root cause of exposure:** outputs synced off-box only at phase end.
+Fix (now mandatory, memory'd): sync-on-seal — every sealed ledger leaves
+the box immediately (HF store), built into the runner before any relaunch.
+Also prior incident same day: OpenRouter credits exhausted mid-run
+(402); watchdog circuit-breaker added after a 193-restart churn loop.
+
+**Decision pending (user):** regenerate slice (~$70-90 credit, ~6-8h
+fleet, hardened runner) vs reduced corpus. Rehearsal-era 6 trajectories
+alone are too thin for a meaningful v0.
