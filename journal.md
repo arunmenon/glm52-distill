@@ -554,3 +554,12 @@ incl. a host with broken HF connectivity that masqueraded as ', US' —
 geolocation filter now requires a named region) + a KVM key-sync lesson
 (attach ssh does not propagate to RUNNING VMs; append authorized_keys
 directly). Launched 12:43: gate CLEAN, partitions 18/15/15.
+
+## 2026-08-25 (later) — Self-hosted generation CONFIRMED FLOWING (GPU 100%)
+
+Five-layer integration gauntlet resolved (docker API pin 1.43; vLLM flags
+--enable-auto-tool-choice --tool-call-parser qwen3_xml --reasoning-parser
+qwen3 — each absence failing differently; full recipe in memory +
+restart_teacher_tools.sh). Clean-slate relaunch: all 48 tasks, 3 workers,
+watchdog + sync-on-seal verified live (HF push live-fired). GPU pegged at
+100% — self-hosted throughput measurement in progress.
