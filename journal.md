@@ -534,3 +534,23 @@ Also prior incident same day: OpenRouter credits exhausted mid-run
 **Decision pending (user):** regenerate slice (~$70-90 credit, ~6-8h
 fleet, hardened runner) vs reduced corpus. Rehearsal-era 6 trajectories
 alone are too thin for a meaningful v0.
+
+## 2026-08-25 — WALK regeneration launched on SELF-HOSTED teacher
+
+Architecture migrated off per-token API after the credit exhaustion +
+data loss: vLLM serves Qwen3.8-27B-FP8 on a UK RTX PRO 6000 ($1.07/hr);
+env-plane VM ($0.067/hr) runs the 3-worker fleet; teacher reaches the VM
+via a REVERSE ssh tunnel (GPU->VM -R 8000, because Vast never mapped
+port 8000 externally and the VM's inbound sshd is flaky). The runner's
+requests-shim gained TEACHER_BASE_URL/TEACHER_API_KEY redirection
+(commit for 09_rehearsal.py). Economics: ~$1.14/hr flat vs ~$67/slice in
+tokens; KD rescore will reuse the same loaded teacher for free.
+
+Hardening now standard: sync-on-seal (every ledger -> HF walk/
+bugfix_regen within ~4 min), teacher-health watchdog (workers hold on
+TEACHER_DOWN instead of churning), detached processes, script-file
+remote ops. Bring-up cost of the era: ~3 wasted GPU-box rentals (~$4,
+incl. a host with broken HF connectivity that masqueraded as ', US' —
+geolocation filter now requires a named region) + a KVM key-sync lesson
+(attach ssh does not propagate to RUNNING VMs; append authorized_keys
+directly). Launched 12:43: gate CLEAN, partitions 18/15/15.
