@@ -563,3 +563,33 @@ qwen3 — each absence failing differently; full recipe in memory +
 restart_teacher_tools.sh). Clean-slate relaunch: all 48 tasks, 3 workers,
 watchdog + sync-on-seal verified live (HF push live-fired). GPU pegged at
 100% — self-hosted throughput measurement in progress.
+
+## 2026-08-26 — WALK regen SEALED at the hard-tier guard; KD corpus complete
+
+Generation halted itself at 45/48 per trajectory_task_spec sec 3
+(pause-not-backfill): hard tier 1/36 rollouts verified (2.8%) < 10% floor
+after >=30 rollouts. Three unsealed hard tasks remain (pandas x2, hydra x1)
+pending the mix decision the guard exists to force.
+
+**Final regen funnel vs the lost run (identical 48-task selection):**
+
+| tier   | regen        | lost run | CRAWL (GLM teacher) |
+|--------|--------------|----------|---------------------|
+| easy   | **15/19 79%**| 11/19 58%| -                   |
+| medium | 12/19 63%    | 12/19 63%| ~20%                |
+| hard   | 1/7 14%      | 1/6 17%  | 0/30 rollouts       |
+| total  | **28 verified tasks / 39 verified rollouts** | 24 | 10 |
+
+Cost: ~$20 of box time (GPU $1.07/hr x ~17h + VM $0.07/hr) vs ~$67 in API
+tokens for the smaller lost corpus. Self-hosted teacher validated on both
+economics AND quality (easy tier +21 points; likely the clean serving
+config - proper reasoning/tool parsers, no provider caching quirks).
+
+**KD rescore complete on the same box before teardown** (teacher already
+loaded, zero extra rental): 39 shards, top-20 full-trace logprobs incl.
+reasoning, coverage 1.0 on every shard. Store now holds 45 KD shards
+(39 WALK + 6 rehearsal) = the v0 training corpus.
+
+Data verified in three places (VM, Mac runs/walk_regen/, HF store:
+105 result.json, 232 trajectories, 45 npz). GPU box 48576207 DESTROYED;
+env VM 48567337 retained ($0.087/hr) pending slices 2-3 work.
