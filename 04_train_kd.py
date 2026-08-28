@@ -152,6 +152,10 @@ def main():
     ap.add_argument("--grad-accum", type=int, default=8)
     ap.add_argument("--max-train-samples", type=int, default=0,
                     help="proxy rung: train on the first N samples only (0=all)")
+    ap.add_argument("--max-seq-len", type=int, default=0,
+                    help="drop rows longer than this (0=none); checkpointed "
+                         "layer inputs alone are ~0.4MB/token on a 9B — "
+                         "sequences past ~65k cannot fit a 48GB card")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -188,6 +192,13 @@ def main():
         model.print_trainable_parameters()
 
     ds = load_from_disk(args.data)
+    if args.max_seq_len:
+        before = {k: len(ds[k]) for k in ds}
+        ds = ds.filter(lambda r: len(r["input_ids"]) <= args.max_seq_len)
+        for k in ds:
+            if len(ds[k]) != before[k]:
+                print(f"max-seq-len {args.max_seq_len}: {k} "
+                      f"{before[k]} -> {len(ds[k])} rows")
     if args.max_train_samples and len(ds["train"]) > args.max_train_samples:
         ds["train"] = ds["train"].select(range(args.max_train_samples))
         print(f"proxy rung: train limited to {args.max_train_samples} samples")
