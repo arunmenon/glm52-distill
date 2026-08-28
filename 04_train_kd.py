@@ -192,7 +192,7 @@ def main():
     else:
         report_to = "none"
 
-    targs = TrainingArguments(
+    targs_kwargs = dict(
         output_dir=args.out,
         per_device_train_batch_size=args.micro_bsz,
         gradient_accumulation_steps=args.grad_accum,
@@ -215,6 +215,17 @@ def main():
         remove_unused_columns=False,
         gradient_checkpointing=True,
     )
+    # transformers v5 ships breaking TrainingArguments changes in minor
+    # releases (warmup_ratio folded into warmup_steps-as-float in 5.0);
+    # filter to the installed version's signature so both majors work
+    import inspect
+    valid = set(inspect.signature(TrainingArguments.__init__).parameters)
+    if "warmup_ratio" not in valid and "warmup_steps" in valid:
+        targs_kwargs["warmup_steps"] = targs_kwargs.pop("warmup_ratio")
+    for k in sorted(set(targs_kwargs) - valid):
+        print(f"targs: dropping {k} (absent in this transformers version)")
+        targs_kwargs.pop(k)
+    targs = TrainingArguments(**targs_kwargs)
 
     trainer = KDTrainer(
         model=model,
