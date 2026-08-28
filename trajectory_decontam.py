@@ -9,10 +9,11 @@ disjoint from SWE-bench Verified at THREE levels before any teacher spend:
   3. text-level     : no near-identical problem statements
                       (normalized exact hash + 8-gram containment)
 
-Usage: python3 trajectory_decontam.py <task_list.json>
-Writes trajectory_gate.json; exits non-zero on any hit (hard gate).
+Usage: python3 trajectory_decontam.py <task_list.json> [--output gate.json]
+Writes trajectory_gate.json by default; exits non-zero on any hit (hard gate).
 """
 
+import argparse
 import hashlib
 import json
 import re
@@ -43,8 +44,12 @@ def ngrams(text: str) -> set:
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("task_list", type=Path)
+    parser.add_argument("--output", type=Path, default=GATE_FILE)
+    args = parser.parse_args()
     import pandas as pd
-    task_list = json.loads(Path(sys.argv[1]).read_text())
+    task_list = json.loads(args.task_list.read_text())
     if not CACHE.exists():
         urllib.request.urlretrieve(VERIFIED_PARQUET, CACHE)
     verified = pd.read_parquet(CACHE)
@@ -78,7 +83,9 @@ def main():
 
     clean = not any(hits.values())
     gate = {"date": time.strftime("%Y-%m-%d"),
-            "task_list": sys.argv[1], "n_tasks": len(task_list),
+            "task_list": str(args.task_list), "n_tasks": len(task_list),
+            "task_list_sha256": hashlib.sha256(
+                args.task_list.read_bytes()).hexdigest(),
             "against": "princeton-nlp/SWE-bench_Verified "
                        f"({len(verified)} instances)",
             "checks": {"instance_ids": len(hits["instance"]),
@@ -87,7 +94,8 @@ def main():
                        "text_ngram": len(hits["text_ngram"])},
             "hits": {k: v for k, v in hits.items() if v},
             "verdict": "CLEAN" if clean else "CONTAMINATED"}
-    GATE_FILE.write_text(json.dumps(gate, indent=2))
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(gate, indent=2))
     print(json.dumps(gate, indent=2))
     sys.exit(0 if clean else 1)
 

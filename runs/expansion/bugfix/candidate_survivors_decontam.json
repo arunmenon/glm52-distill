@@ -1,0 +1,15 @@
+{
+  "date": "2026-08-28",
+  "task_list": "runs/expansion/bugfix/candidate_survivors.json",
+  "n_tasks": 42,
+  "task_list_sha256": "1702fb4cfb65f67cc8c684449e564894975b575e949bad2b299420c4e9caed7e",
+  "against": "princeton-nlp/SWE-bench_Verified (500 instances)",
+  "checks": {
+    "instance_ids": 0,
+    "repo_overlap": 0,
+    "text_exact": 0,
+    "text_ngram": 0
+  },
+  "hits": {},
+  "verdict": "CLEAN"
+}

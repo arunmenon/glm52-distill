@@ -1,0 +1,15 @@
+{
+  "date": "2026-08-28",
+  "task_list": "runs/expansion/bugfix/smoke_queue.json",
+  "n_tasks": 36,
+  "task_list_sha256": "6a76c558b4c1745cbfcbd140642251660d6ec1246653cd86bae0606d0dd8eca8",
+  "against": "princeton-nlp/SWE-bench_Verified (500 instances)",
+  "checks": {
+    "instance_ids": 0,
+    "repo_overlap": 0,
+    "text_exact": 0,
+    "text_ngram": 0
+  },
+  "hits": {},
+  "verdict": "CLEAN"
+}

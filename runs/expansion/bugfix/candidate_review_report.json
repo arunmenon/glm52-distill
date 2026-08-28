@@ -1,0 +1,295 @@
+{
+  "schema_version": "expansion_candidate_review_v1",
+  "approval_state": "REVIEWED_CANDIDATES_NOT_SPEND_APPROVED",
+  "input_pool": "runs/expansion/bugfix/candidate_pool.json",
+  "input_pool_sha256": "4daf5a7dceed50161e23e0eb8de19b8abc45f27e7e95e58d81c24cad41ef106d",
+  "image_preflight": {
+    "path": "runs/expansion/bugfix/image_preflight.json",
+    "snapshot_at": "2026-08-28T17:17:59.951695+00:00",
+    "totals": {
+      "available": 77,
+      "missing": 3,
+      "indeterminate": 0
+    }
+  },
+  "counts": {
+    "reviewed": 80,
+    "bugfix_survivor": 42,
+    "future_slice": 30,
+    "hard_exclude_missing_image": 3,
+    "quality_reject": 5
+  },
+  "survivors": {
+    "count": 42,
+    "retained_seeds": 10,
+    "new": 32,
+    "by_runner_tier": {
+      "easy": 6,
+      "hard": 10,
+      "medium": 26
+    },
+    "by_heuristic_difficulty": {
+      "hard": 9,
+      "medium": 33
+    },
+    "by_repo": {
+      "bokeh/bokeh": 5,
+      "conan-io/conan": 2,
+      "dask/dask": 4,
+      "facebookresearch/hydra": 2,
+      "getmoto/moto": 7,
+      "iterative/dvc": 6,
+      "modin-project/modin": 1,
+      "pandas-dev/pandas": 5,
+      "pydantic/pydantic": 6,
+      "python/mypy": 4
+    },
+    "by_bug_family": {
+      "async_concurrency": 8,
+      "build_dependency": 3,
+      "cache_incremental": 5,
+      "cloud_api_state": 3,
+      "filesystem_versioning": 3,
+      "numeric_data": 7,
+      "parsing_serialization": 7,
+      "type_system": 6
+    }
+  },
+  "tier_policy": {
+    "tier": "Exact 09_rehearsal.tier_of patch-size tier, used for corpus continuity.",
+    "heuristic_difficulty": "Diagnostic rubric label from the candidate builder."
+  },
+  "decontamination": {
+    "path": "runs/expansion/bugfix/candidate_survivors_decontam.json",
+    "status": "CLEAN",
+    "verdict": "CLEAN",
+    "task_list_sha256": "1702fb4cfb65f67cc8c684449e564894975b575e949bad2b299420c4e9caed7e",
+    "current_survivor_sha256": "1702fb4cfb65f67cc8c684449e564894975b575e949bad2b299420c4e9caed7e",
+    "checks": {
+      "instance_ids": 0,
+      "repo_overlap": 0,
+      "text_exact": 0,
+      "text_ngram": 0
+    }
+  },
+  "authoritative_next_stage": "runs/expansion/bugfix/candidate_survivors.json",
+  "prior_frozen_list": {
+    "path": "runs/expansion/bugfix/expansion_tasks.json",
+    "authority": "historical frozen snapshot; not overwritten",
+    "dispositions": [
+      {
+        "instance_id": "getmoto__moto-6308",
+        "repo": "getmoto/moto",
+        "title": "S3 CopyObject in place with Checksum raises an exception",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_easy_bug_slice",
+        "reason": "Clear but low-diagnostic one-file lifecycle-ordering fix; below the requested medium/hard focus."
+      },
+      {
+        "instance_id": "dask__dask-7305",
+        "repo": "dask/dask",
+        "title": "`partition_quantiles` finds incorrect minimum with large unsigned integers",
+        "prior_frozen_tier": "easy",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "pandas-dev__pandas-56849",
+        "repo": "pandas-dev/pandas",
+        "title": "REGR: freq \"m\" (as alias of deprecated \"M\") raises an error",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_easy_bug_slice",
+        "reason": "Narrow lowercase frequency-alias regression with a small localized fix."
+      },
+      {
+        "instance_id": "iterative__dvc-1681",
+        "repo": "iterative/dvc",
+        "title": "dvc status regression after 0.30 release",
+        "prior_frozen_tier": "easy",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "python__mypy-15413",
+        "repo": "python/mypy",
+        "title": "Warn Return Any now applies to small lambdas",
+        "prior_frozen_tier": "easy",
+        "disposition": "quality_reject",
+        "reason": "Reporter explicitly leaves intended warn-return-any behavior undecided."
+      },
+      {
+        "instance_id": "getmoto__moto-5835",
+        "repo": "getmoto/moto",
+        "title": "Type not validated with SSM put_parameter",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_easy_bug_slice",
+        "reason": "Simple enum validation omission; below the requested diagnostic difficulty."
+      },
+      {
+        "instance_id": "conan-io__conan-14177",
+        "repo": "conan-io/conan",
+        "title": "[feature] Verbose option for apply_conandata_patches()",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_feature_slice",
+        "reason": "Feature request supplies the desired signature and behavior directly."
+      },
+      {
+        "instance_id": "pandas-dev__pandas-53958",
+        "repo": "pandas-dev/pandas",
+        "title": "API: `NaTType` and `NAType` are in inconsistent packages",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_api_slice",
+        "reason": "API-placement design question with a one-file export-only implementation."
+      },
+      {
+        "instance_id": "pandas-dev__pandas-51605",
+        "repo": "pandas-dev/pandas",
+        "title": "REGR: MultiIndex.isin with an empty iterable raises",
+        "prior_frozen_tier": "easy",
+        "disposition": "future_easy_bug_slice",
+        "reason": "Valid empty-input regression, but localized and trivial relative to the target slice."
+      },
+      {
+        "instance_id": "iterative__dvc-9395",
+        "repo": "iterative/dvc",
+        "title": "Make that `dvc repro --pull` pulls all missing files.",
+        "prior_frozen_tier": "easy",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "getmoto__moto-7361",
+        "repo": "getmoto/moto",
+        "title": "Feature Request: Support apigateway patchOperations for 'path': '/apiStages'",
+        "prior_frozen_tier": "medium",
+        "disposition": "future_feature_slice",
+        "reason": "Adds emulation coverage for a previously unsupported API Gateway patch operation."
+      },
+      {
+        "instance_id": "getmoto__moto-5885",
+        "repo": "getmoto/moto",
+        "title": "EKS DescribeNodegroup not returning id or name launch template attribute in response",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "getmoto__moto-6317",
+        "repo": "getmoto/moto",
+        "title": "S3 Put Object results in empty object",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "getmoto__moto-7607",
+        "repo": "getmoto/moto",
+        "title": "Cryptic error when using start_execution with Moto 5.0.5 ",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "python__mypy-16154",
+        "repo": "python/mypy",
+        "title": "Incorrect Error with NamedTuple slices ? ",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "python__mypy-14835",
+        "repo": "python/mypy",
+        "title": "cached runs of dmypy stop reporting \"unused type: ignore\" warnings",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "python__mypy-16503",
+        "repo": "python/mypy",
+        "title": "mypy's narrowing for match statements sometimes fails when the subject of the match is a function call",
+        "prior_frozen_tier": "medium",
+        "disposition": "reconsider_after_preflight",
+        "reason": "Good medium bug, held only because it was outside the 10 retained seeds and mypy was already dense."
+      },
+      {
+        "instance_id": "python__mypy-11585",
+        "repo": "python/mypy",
+        "title": "generic mutable class attributes introduce a vent in the type system",
+        "prior_frozen_tier": "medium",
+        "disposition": "reconsider_after_preflight",
+        "reason": "Good type-system bug, held to avoid further mypy concentration; not rejected on quality."
+      },
+      {
+        "instance_id": "python__mypy-14988",
+        "repo": "python/mypy",
+        "title": "mypyc: `Cls.__dict__` is `mappingproxy`, not `dict`",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "conan-io__conan-14378",
+        "repo": "conan-io/conan",
+        "title": "[bug] RC : fatal error RC1212: invalid option - /z argument missing substitute font name",
+        "prior_frozen_tier": "medium",
+        "disposition": "future_environment_slice",
+        "reason": "Windows resource-compiler report carries environment/toolchain smoke risk."
+      },
+      {
+        "instance_id": "conan-io__conan-10874",
+        "repo": "conan-io/conan",
+        "title": "[feature] Move [rmdir] to conan.tools.files",
+        "prior_frozen_tier": "medium",
+        "disposition": "future_feature_slice",
+        "reason": "Small namespace migration feature, not a diagnostic bug-fix task."
+      },
+      {
+        "instance_id": "conan-io__conan-10917",
+        "repo": "conan-io/conan",
+        "title": "[bug] `cmake_find_mode` property is broken",
+        "prior_frozen_tier": "medium",
+        "disposition": "retained_seed",
+        "reason": "One of the 10 explicitly retained human-reviewed seeds."
+      },
+      {
+        "instance_id": "iterative__dvc-4961",
+        "repo": "iterative/dvc",
+        "title": "stage name incorrectly parsed with parametrization for dict",
+        "prior_frozen_tier": "hard",
+        "disposition": "hard_reject_verifier_input",
+        "reason": "FAIL_TO_PASS node ids are truncated parametrized pytest ids and are unsafe for verification."
+      },
+      {
+        "instance_id": "iterative__dvc-2017",
+        "repo": "iterative/dvc",
+        "title": "dvc: unify requirements files and setup.py",
+        "prior_frozen_tier": "hard",
+        "disposition": "hard_reject_task_test_mismatch",
+        "reason": "Requirements/setup maintenance statement and gold patch do not match the listed pipeline FAIL_TO_PASS tests."
+      }
+    ]
+  },
+  "historical_monai_preflight_bug": {
+    "observed_false_misses_in_frozen_selection": 7,
+    "cause": "Docker repository path was not lowercased; registry returned HTTP 400, not 404.",
+    "status": "fixed in runner and preflight",
+    "disposition": "Those Lite tasks are re-eligible but require normal rubric review and current preflight before insertion."
+  },
+  "outputs": {
+    "review": "runs/expansion/bugfix/candidate_review.json",
+    "survivors": "runs/expansion/bugfix/candidate_survivors.json",
+    "future_slice": "runs/expansion/bugfix/future_slice.json",
+    "quality_rejects": "runs/expansion/bugfix/quality_rejects.json",
+    "hard_excluded": "runs/expansion/bugfix/hard_excluded.json",
+    "markdown": "runs/expansion/bugfix/candidate_review.md"
+  },
+  "output_sha256": {
+    "review": "d11ec9eda85f6d32305c30a349c1ecd956f01a0549c104af0d1b410f4d1de219",
+    "survivors": "1702fb4cfb65f67cc8c684449e564894975b575e949bad2b299420c4e9caed7e",
+    "future_slice": "20123a11299cf4bf85a8025524274ef762da1e069a37722ca3bcae64ec0bfa76",
+    "quality_rejects": "aec52a2fe3791eb9d8928582f84b425d03eca06cc86c1884b0922b9d5e3641e7",
+    "hard_excluded": "8c25205b93dd3fa4f79d8cf510a7966e8df76d5e9d57030ff77533d8b18ead4d"
+  }
+}

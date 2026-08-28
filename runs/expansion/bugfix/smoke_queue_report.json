@@ -1,0 +1,113 @@
+{
+  "schema_version": "expansion_gold_smoke_queue_v1",
+  "approval_state": "GOLD_SMOKE_ONLY_NO_TEACHER_SPEND",
+  "queue_count": 36,
+  "source_survivors": 42,
+  "source_survivors_sha256": "1702fb4cfb65f67cc8c684449e564894975b575e949bad2b299420c4e9caed7e",
+  "by_runner_tier": {
+    "easy": 6,
+    "hard": 4,
+    "medium": 26
+  },
+  "by_heuristic_difficulty": {
+    "hard": 5,
+    "medium": 31
+  },
+  "by_repo": {
+    "bokeh/bokeh": 3,
+    "conan-io/conan": 2,
+    "dask/dask": 3,
+    "facebookresearch/hydra": 2,
+    "getmoto/moto": 6,
+    "iterative/dvc": 6,
+    "modin-project/modin": 1,
+    "pandas-dev/pandas": 4,
+    "pydantic/pydantic": 5,
+    "python/mypy": 4
+  },
+  "by_bug_family": {
+    "async_concurrency": 8,
+    "build_dependency": 3,
+    "cache_incremental": 5,
+    "cloud_api_state": 3,
+    "filesystem_versioning": 3,
+    "numeric_data": 5,
+    "parsing_serialization": 4,
+    "type_system": 5
+  },
+  "runner_hard_policy": {
+    "cap": 4,
+    "selected": [
+      {
+        "instance_id": "pandas-dev__pandas-50672",
+        "reason": "Arrow dtype correctness; clear reproduction and broad predicate coverage."
+      },
+      {
+        "instance_id": "bokeh__bokeh-13608",
+        "reason": "Rendering/math integration regression from a distinct application domain."
+      },
+      {
+        "instance_id": "iterative__dvc-1700",
+        "reason": "SCM-boundary bug and one of the stronger diagnostic-hard survivors."
+      },
+      {
+        "instance_id": "modin-project__modin-5946",
+        "reason": "Only surviving Modin bug; retains distributed-dataframe diversity."
+      }
+    ],
+    "held_for_later": [
+      {
+        "instance_id": "pandas-dev__pandas-50151",
+        "repo": "pandas-dev/pandas",
+        "heuristic_difficulty": "medium",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      },
+      {
+        "instance_id": "bokeh__bokeh-13636",
+        "repo": "bokeh/bokeh",
+        "heuristic_difficulty": "medium",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      },
+      {
+        "instance_id": "dask__dask-10054",
+        "repo": "dask/dask",
+        "heuristic_difficulty": "hard",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      },
+      {
+        "instance_id": "getmoto__moto-6709",
+        "repo": "getmoto/moto",
+        "heuristic_difficulty": "hard",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      },
+      {
+        "instance_id": "pydantic__pydantic-5868",
+        "repo": "pydantic/pydantic",
+        "heuristic_difficulty": "hard",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      },
+      {
+        "instance_id": "bokeh__bokeh-12902",
+        "repo": "bokeh/bokeh",
+        "heuristic_difficulty": "hard",
+        "reason": "Held by the four-task runner-hard cap; remains in candidate_survivors.json."
+      }
+    ]
+  },
+  "decontamination": {
+    "path": "runs/expansion/bugfix/smoke_queue_decontam.json",
+    "status": "CLEAN",
+    "verdict": "CLEAN",
+    "checks": {
+      "instance_ids": 0,
+      "repo_overlap": 0,
+      "text_exact": 0,
+      "text_ngram": 0
+    },
+    "task_list_sha256": "6a76c558b4c1745cbfcbd140642251660d6ec1246653cd86bae0606d0dd8eca8",
+    "current_queue_sha256": "6a76c558b4c1745cbfcbd140642251660d6ec1246653cd86bae0606d0dd8eca8"
+  },
+  "queue": "runs/expansion/bugfix/smoke_queue.json",
+  "queue_sha256": "6a76c558b4c1745cbfcbd140642251660d6ec1246653cd86bae0606d0dd8eca8",
+  "markdown": "runs/expansion/bugfix/smoke_queue.md"
+}

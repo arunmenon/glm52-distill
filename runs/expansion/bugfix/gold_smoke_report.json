@@ -1,0 +1,121 @@
+{
+  "schema_version": "expansion_gold_smoke_report_v1",
+  "queue": "runs/expansion/bugfix/smoke_queue.json",
+  "queue_sha256": "6a76c558b4c1745cbfcbd140642251660d6ec1246653cd86bae0606d0dd8eca8",
+  "teacher_spend_usd": 0.0,
+  "queue_tasks": 36,
+  "completed": 0,
+  "passed": 0,
+  "failed": 0,
+  "pending": 36,
+  "stale_ledgers": [],
+  "passed_ids": [],
+  "failed_ids": [],
+  "pending_ids": [
+    "getmoto__moto-6317",
+    "dask__dask-7305",
+    "getmoto__moto-5885",
+    "pandas-dev__pandas-50672",
+    "python__mypy-16154",
+    "iterative__dvc-1681",
+    "getmoto__moto-7607",
+    "modin-project__modin-5946",
+    "conan-io__conan-10917",
+    "iterative__dvc-9395",
+    "python__mypy-14835",
+    "bokeh__bokeh-13608",
+    "pydantic__pydantic-9004",
+    "dask__dask-10042",
+    "facebookresearch__hydra-1458",
+    "iterative__dvc-1700",
+    "python__mypy-14988",
+    "dask__dask-8462",
+    "pydantic__pydantic-6100",
+    "facebookresearch__hydra-952",
+    "bokeh__bokeh-13757",
+    "pandas-dev__pandas-47780",
+    "pydantic__pydantic-8947",
+    "iterative__dvc-1690",
+    "conan-io__conan-10960",
+    "getmoto__moto-5644",
+    "iterative__dvc-3727",
+    "pydantic__pydantic-6293",
+    "bokeh__bokeh-13443",
+    "getmoto__moto-6743",
+    "pandas-dev__pandas-56321",
+    "python__mypy-11213",
+    "pydantic__pydantic-5834",
+    "getmoto__moto-7317",
+    "pandas-dev__pandas-57297",
+    "iterative__dvc-4309"
+  ],
+  "by_runner_tier": {
+    "easy": {
+      "queue": 6,
+      "completed": 0,
+      "passed": 0
+    },
+    "hard": {
+      "queue": 4,
+      "completed": 0,
+      "passed": 0
+    },
+    "medium": {
+      "queue": 26,
+      "completed": 0,
+      "passed": 0
+    }
+  },
+  "by_repo": {
+    "bokeh/bokeh": {
+      "queue": 3,
+      "completed": 0,
+      "passed": 0
+    },
+    "conan-io/conan": {
+      "queue": 2,
+      "completed": 0,
+      "passed": 0
+    },
+    "dask/dask": {
+      "queue": 3,
+      "completed": 0,
+      "passed": 0
+    },
+    "facebookresearch/hydra": {
+      "queue": 2,
+      "completed": 0,
+      "passed": 0
+    },
+    "getmoto/moto": {
+      "queue": 6,
+      "completed": 0,
+      "passed": 0
+    },
+    "iterative/dvc": {
+      "queue": 6,
+      "completed": 0,
+      "passed": 0
+    },
+    "modin-project/modin": {
+      "queue": 1,
+      "completed": 0,
+      "passed": 0
+    },
+    "pandas-dev/pandas": {
+      "queue": 4,
+      "completed": 0,
+      "passed": 0
+    },
+    "pydantic/pydantic": {
+      "queue": 5,
+      "completed": 0,
+      "passed": 0
+    },
+    "python/mypy": {
+      "queue": 4,
+      "completed": 0,
+      "passed": 0
+    }
+  }
+}
