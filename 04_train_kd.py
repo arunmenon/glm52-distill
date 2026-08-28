@@ -79,6 +79,21 @@ class KDTrainer(Trainer):
         topk_lps = inputs.pop("topk_logprobs", None)
         labels = inputs["labels"]
 
+        if self.alpha == 0.0 or topk_ids is None:
+            # SFT path: let the model compute CE internally so liger's fused
+            # linear CE applies — materializing logits for an 80k-token
+            # sequence over a 248k vocab is a 40GB tensor and OOMs any 48GB
+            # card. The KD path below still needs logits; long-sequence KD
+            # requires a chunked gather (future work).
+            outputs = model(
+                input_ids=inputs["input_ids"],
+                attention_mask=inputs["attention_mask"],
+                labels=labels,
+            )
+            loss = outputs.loss
+            self._log_terms(loss, torch.tensor(0.0))
+            return (loss, outputs) if return_outputs else loss
+
         outputs = model(
             input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
         )
@@ -96,11 +111,6 @@ class KDTrainer(Trainer):
             ignore_index=IGNORE,
             reduction="sum",
         ) / n_tok
-
-        if self.alpha == 0.0 or topk_ids is None:
-            loss = ce
-            self._log_terms(ce, torch.tensor(0.0))
-            return (loss, outputs) if return_outputs else loss
 
         t_ids = topk_ids[:, 1:, :]
         t_lps = topk_lps[:, 1:, :]
