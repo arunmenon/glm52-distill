@@ -1,0 +1,25 @@
+# 4-GPU, optimizer-only CPU offload: 9B-class on 48GB cards. Full param+opt
+# offload spikes CPU RAM at engine init (4 ranks x fp32 copies) and drew the
+# OOM killer on a 251GB host; params stay GPU-resident here.
+compute_environment: LOCAL_MACHINE
+debug: false
+deepspeed_config:
+  zero_stage: 3
+  zero3_init_flag: true
+  zero3_save_16bit_model: true
+  offload_optimizer_device: cpu
+  offload_param_device: none
+  gradient_clipping: 1.0
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 4
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
