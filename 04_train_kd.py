@@ -202,10 +202,12 @@ def main():
         warmup_ratio=0.03,
         bf16=True,
         logging_steps=10,
-        save_steps=500,
+        # the trajectory corpus is ~100-200 optimizer steps total; 500 here
+        # meant a crashed box lost the whole run
+        save_steps=25,
         save_total_limit=3,
         eval_strategy="steps",
-        eval_steps=500,
+        eval_steps=50,
         max_grad_norm=1.0,
         report_to=report_to,
         run_name=f"{args.out.split('/')[-1]}_a{args.alpha}_T{args.temperature}",
@@ -223,7 +225,9 @@ def main():
         alpha=args.alpha if has_topk else 0.0,
         kd_temperature=args.temperature,
     )
-    trainer.train()
+    import glob as _glob
+    last_ckpt = bool(_glob.glob(os.path.join(args.out, "checkpoint-*")))
+    trainer.train(resume_from_checkpoint=last_ckpt or None)
 
     if args.lora:
         # ZeRO-3 shards parameters across ranks; merging inside the training
