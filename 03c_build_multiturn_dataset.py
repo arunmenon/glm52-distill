@@ -29,7 +29,11 @@ from pathlib import Path
 import pandas as pd
 
 IGNORE = -100
-MAX_LEN_DEFAULT = 32768
+# 81920 (80k): corpus max is 78,641 tokens; the old 32k default silently
+# dropped 32/45 trajectories, including every long-recovery one (external
+# review 2026-08). Never lower this below the corpus max without a
+# deliberate compaction strategy.
+MAX_LEN_DEFAULT = 81920
 
 
 def render_qwen3_segments(messages: list[dict]) -> list[tuple[str, bool]]:
@@ -96,8 +100,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="packed/trajectories/"
                                       "trajectories_v0.parquet")
-    ap.add_argument("--tokenizer", default="Qwen/Qwen3-8B")
-    ap.add_argument("--out", default="packed/mt_qwen3")
+    ap.add_argument("--tokenizer", default="Qwen/Qwen3.5-9B")
+    ap.add_argument("--out", default="packed/mt_qwen35_9b")
     ap.add_argument("--max-len", type=int, default=MAX_LEN_DEFAULT)
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
@@ -126,8 +130,19 @@ def main():
             continue
         rows.append({"input_ids": input_ids, "labels": labels,
                      "instance_id": row.instance_id, "tier": row.tier,
+                     "source": row.source,
+                     "history_assisted": bool(row.history_assisted),
                      "n_tokens": len(input_ids),
                      "n_trainable": sum(1 for l in labels if l != IGNORE)})
+
+    # duplicate-rollout balancing: tasks verified by several rollouts should
+    # not outweigh single-rollout tasks; trainer multiplies loss by `weight`
+    n_per_instance = {}
+    for r in rows:
+        n_per_instance[r["instance_id"]] = \
+            n_per_instance.get(r["instance_id"], 0) + 1
+    for r in rows:
+        r["weight"] = 1.0 / n_per_instance[r["instance_id"]]
 
     # task-level split: rollouts of one instance never straddle splits
     instance_ids = sorted({r["instance_id"] for r in rows})

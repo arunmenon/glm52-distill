@@ -1,0 +1,6 @@
+{
+  "tasks_seen": 55,
+  "tasks_paired": 11,
+  "pairs": 23,
+  "output": "packed/dpo/dpo_pairs_v0.parquet"
+}
