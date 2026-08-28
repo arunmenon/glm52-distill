@@ -20,6 +20,7 @@ tool. Never mix format ids in one training run (design section 2).
 """
 
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -36,6 +37,28 @@ TOKENIZER_JSON = Path("/private/tmp/claude-501/-Users-arunmenon-projects-"
                       "glm52-distill/ad896283-5c39-4a76-bdab-80daf2f812f4/"
                       "scratchpad/tokenizer_glm52.json")
 FORMAT_ID = "fc_bash_v1"
+# Repair-by-retrieval detector (reviewer finding, 2026-08-28): SWE-Gym
+# containers ship full git history, so the upstream fix is often reachable
+# via git log/show/tag. 82% of v0 trajectories used it. Label, don't hide.
+GIT_HISTORY_RE = re.compile(
+    r"git\s+(log|show|tag|describe|reflog|cherry|branch\s+-[ar])")
+
+
+def is_history_assisted(messages: list[dict]) -> bool:
+    for m in messages:
+        for tc in m.get("tool_calls") or []:
+            args = tc.get("arguments") or tc.get("function", {}).get(
+                "arguments", "")
+            if isinstance(args, str):
+                try:
+                    args = json.loads(args).get("command", "")
+                except Exception:
+                    pass
+            elif isinstance(args, dict):
+                args = args.get("command", "")
+            if GIT_HISTORY_RE.search(str(args)):
+                return True
+    return False
 TOKEN_CAP = 32768          # design section 5: report, and flag over-cap rows
 
 KEEP_KEYS = {"assistant": ("role", "content", "reasoning", "tool_calls"),
@@ -122,7 +145,8 @@ def main():
                 "instance_id": traj["instance_id"],
                 "repo": result["repo"], "tier": result["tier"],
                 "rollout": rollout_rec["rollout"],
-                "source": "swegym_lite_rehearsal",
+                "source": result_file.parent.parent.name,
+                "history_assisted": is_history_assisted(messages),
                 "format": FORMAT_ID,
                 "teacher_model": traj["model"],
                 "n_steps": rollout_rec.get("n_steps"),
