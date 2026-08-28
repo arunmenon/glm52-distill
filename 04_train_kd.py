@@ -214,6 +214,9 @@ def main():
         seed=args.seed,
         remove_unused_columns=False,
         gradient_checkpointing=True,
+        # 80k-token sequences x 248k vocab = 30-40GB materialized logits;
+        # liger's fused linear CE computes loss without materializing them
+        use_liger_kernel=True,
     )
     # transformers v5 ships breaking TrainingArguments changes in minor
     # releases (warmup_ratio folded into warmup_steps-as-float in 5.0);
