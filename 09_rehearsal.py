@@ -73,7 +73,9 @@ def load_env_key():
 
 
 def image_name(instance_id: str) -> str:
-    return f"xingyaoww/sweb.eval.x86_64.{instance_id.replace('__', '_s_')}"
+    # docker repo names must be lowercase; mixed-case repos (Project-MONAI)
+    # 400 on the hub API and fail `docker pull` without this
+    return f"xingyaoww/sweb.eval.x86_64.{instance_id.replace('__', '_s_')}".lower()
 
 
 def image_exists_on_hub(instance_id: str) -> bool:

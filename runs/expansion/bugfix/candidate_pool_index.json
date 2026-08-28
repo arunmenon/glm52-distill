@@ -1,0 +1,2300 @@
+[
+  {
+    "position": 1,
+    "instance_id": "dask__dask-7305",
+    "repo": "dask/dask",
+    "problem_title": "`partition_quantiles` finds incorrect minimum with large unsigned integers",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 0,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 4
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 104
+    },
+    "review_status": "retained_seed_needs_repair",
+    "review_flags": [],
+    "review_notes": [
+      "Add test_set_index_interpolate_large_uint to FAIL_TO_PASS."
+    ]
+  },
+  {
+    "position": 2,
+    "instance_id": "iterative__dvc-1681",
+    "repo": "iterative/dvc",
+    "problem_title": "dvc status regression after 0.30 release",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 0,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 11
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 12
+    },
+    "review_status": "retained_seed",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 3,
+    "instance_id": "getmoto__moto-6317",
+    "repo": "getmoto/moto",
+    "problem_title": "S3 Put Object results in empty object",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "cloud_api_state",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 16
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 6
+    },
+    "review_status": "retained_seed_needs_repair",
+    "review_flags": [],
+    "review_notes": [
+      "Add the repeated patch_client reproduction that the gold test exercises."
+    ]
+  },
+  {
+    "position": 4,
+    "instance_id": "iterative__dvc-9395",
+    "repo": "iterative/dvc",
+    "problem_title": "Make that `dvc repro --pull` pulls all missing files.",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 0,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 10
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 27
+    },
+    "review_status": "retained_seed_needs_repair",
+    "review_flags": [],
+    "review_notes": [
+      "Add missing-import and intermediate-output cases to FAIL_TO_PASS."
+    ]
+  },
+  {
+    "position": 5,
+    "instance_id": "getmoto__moto-5885",
+    "repo": "getmoto/moto",
+    "problem_title": "EKS DescribeNodegroup not returning id or name launch template attribute in response",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "cloud_api_state",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 19
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 1
+    },
+    "review_status": "retained_seed",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 6,
+    "instance_id": "python__mypy-16154",
+    "repo": "python/mypy",
+    "problem_title": "Incorrect Error with NamedTuple slices ?",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 11
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 2
+    },
+    "review_status": "retained_seed",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 7,
+    "instance_id": "getmoto__moto-7607",
+    "repo": "getmoto/moto",
+    "problem_title": "Cryptic error when using start_execution with Moto 5.0.5",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 16
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 2
+    },
+    "review_status": "retained_seed_needs_smoke",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": [
+      "Prove repeated gold verification cannot hang."
+    ]
+  },
+  {
+    "position": 8,
+    "instance_id": "conan-io__conan-10917",
+    "repo": "conan-io/conan",
+    "problem_title": "[bug] `cmake_find_mode` property is broken",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 1,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 30
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 19
+    },
+    "review_status": "retained_seed_needs_smoke",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": [
+      "Gold-smoke the CMake integration tests twice."
+    ]
+  },
+  {
+    "position": 9,
+    "instance_id": "Project-MONAI__MONAI-578",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "Remove output_postfix in post transforms",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "protocol_api",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 76
+    },
+    "test_stats": {
+      "fail_to_pass": 6,
+      "pass_to_pass": 17
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 10,
+    "instance_id": "bokeh__bokeh-13641",
+    "repo": "bokeh/bokeh",
+    "problem_title": "[FEATURE] DataTable from_dataframe()",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "other",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 49
+    },
+    "test_stats": {
+      "fail_to_pass": 7,
+      "pass_to_pass": 45
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 11,
+    "instance_id": "python__mypy-14835",
+    "repo": "python/mypy",
+    "problem_title": "cached runs of dmypy stop reporting \"unused type: ignore\" warnings",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 10
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 0
+    },
+    "review_status": "retained_seed_needs_repair",
+    "review_flags": [
+      "no_pass_to_pass"
+    ],
+    "review_notes": [
+      "Add representative daemon/cache PASS_TO_PASS coverage."
+    ]
+  },
+  {
+    "position": 12,
+    "instance_id": "pandas-dev__pandas-50672",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: `is_integer_dtype` returns `False` for integer `ArrowDtype`s",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 19
+    },
+    "test_stats": {
+      "fail_to_pass": 18,
+      "pass_to_pass": 13193
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 13,
+    "instance_id": "pydantic__pydantic-9004",
+    "repo": "pydantic/pydantic",
+    "problem_title": "It is possible to instantiate model with `model_config` field without exceptions",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 8
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 60
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 14,
+    "instance_id": "facebookresearch__hydra-1458",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "CLI override of hydra/conf does not require `+` prefix",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 48
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 101
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 15,
+    "instance_id": "python__mypy-14988",
+    "repo": "python/mypy",
+    "problem_title": "mypyc: `Cls.__dict__` is `mappingproxy`, not `dict`",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "retained_expansion_seed",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 30
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 33
+    },
+    "review_status": "retained_seed",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 16,
+    "instance_id": "modin-project__modin-6618",
+    "repo": "modin-project/modin",
+    "problem_title": "PERF: `__setitem__` on multiple columns should be evaluated lazily",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 45
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 3456
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "performance_task"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 17,
+    "instance_id": "Project-MONAI__MONAI-2465",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "How do I to use a Pad transform with a constant value?",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "protocol_api",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 63
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 9
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "usage_question"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 18,
+    "instance_id": "pandas-dev__pandas-50151",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: `DataFrame.dtypes` doesn't include backend for `string` columns",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 16
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 44
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 19,
+    "instance_id": "conan-io__conan-14532",
+    "repo": "conan-io/conan",
+    "problem_title": "[feature][2.0.9] settings_target accessible in the compatibility method",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 9
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 18
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 20,
+    "instance_id": "dask__dask-8590",
+    "repo": "dask/dask",
+    "problem_title": "zarr region support",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 28
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 425
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 21,
+    "instance_id": "bokeh__bokeh-13636",
+    "repo": "bokeh/bokeh",
+    "problem_title": "Use globally unique and CSS safe IDs in `<script type=\"application/json\">`",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 39
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 1
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 22,
+    "instance_id": "pydantic__pydantic-6100",
+    "repo": "pydantic/pydantic",
+    "problem_title": "`to_string_ser_schema` doesn't work properly anymore",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 10
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 672
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 23,
+    "instance_id": "modin-project__modin-6759",
+    "repo": "modin-project/modin",
+    "problem_title": "Merge partial dtype caches on `concat(axis=0)`",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 139
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 198
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 24,
+    "instance_id": "conan-io__conan-14051",
+    "repo": "conan-io/conan",
+    "problem_title": "[feature] add prefix var to pkg-config alias",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 27
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 15
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 25,
+    "instance_id": "modin-project__modin-5949",
+    "repo": "modin-project/modin",
+    "problem_title": "Precompute new dtype cache for binary operations when  a scalar is involved",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 1,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 219
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 155
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "large_gold_patch",
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 26,
+    "instance_id": "facebookresearch__hydra-952",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "[Bug] Assigning a dictionary to untyped field fails",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 24
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 128
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 27,
+    "instance_id": "pydantic__pydantic-9137",
+    "repo": "pydantic/pydantic",
+    "problem_title": "coerce_numbers_to_str needs a per-field variant",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 23
+    },
+    "test_stats": {
+      "fail_to_pass": 10,
+      "pass_to_pass": 9
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 28,
+    "instance_id": "Project-MONAI__MONAI-3493",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "Bending energy loss is not scale invariant",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "other",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 29
+    },
+    "test_stats": {
+      "fail_to_pass": 7,
+      "pass_to_pass": 9
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 29,
+    "instance_id": "pandas-dev__pandas-47780",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: Incosistent handling of null types by PeriodIndex",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 4
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 296
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 30,
+    "instance_id": "pydantic__pydantic-8947",
+    "repo": "pydantic/pydantic",
+    "problem_title": "create_model fails to use type annotation of typing.Annotated",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 16
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 44
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 31,
+    "instance_id": "dask__dask-10054",
+    "repo": "dask/dask",
+    "problem_title": "`sort_values` fails to sort by nullable numeric columns when a partition is entirely null",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 137
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 237
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 32,
+    "instance_id": "iterative__dvc-1690",
+    "repo": "iterative/dvc",
+    "problem_title": "status: dependency on local cache",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 42
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 95
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 33,
+    "instance_id": "facebookresearch__hydra-1725",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "Hydra 1.1 when composing a config that is a list at the top level.",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 18
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 69
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 34,
+    "instance_id": "conan-io__conan-10960",
+    "repo": "conan-io/conan",
+    "problem_title": "[bug] version is not set correctly when using layout",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 54
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 4
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 35,
+    "instance_id": "facebookresearch__hydra-1422",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "[Feature Request] : Support adding fields to Dict without +",
+    "difficulty": "hard",
+    "difficulty_score": 9,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 18
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 89
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 36,
+    "instance_id": "dask__dask-6992",
+    "repo": "dask/dask",
+    "problem_title": "dask groupby could support dropna argument",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 59
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 666
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 37,
+    "instance_id": "modin-project__modin-5946",
+    "repo": "modin-project/modin",
+    "problem_title": "Reading large json lines dataset fails because of rows having different columns",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 17
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 1992
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 38,
+    "instance_id": "bokeh__bokeh-13608",
+    "repo": "bokeh/bokeh",
+    "problem_title": "[BUG] Multiple inline math elements in different axes causing axis labels to disappear",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 62
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 15
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 39,
+    "instance_id": "bokeh__bokeh-13800",
+    "repo": "bokeh/bokeh",
+    "problem_title": "[FEATURE] Allow bokeh server embed script to forward credentials",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 60
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 28
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 40,
+    "instance_id": "getmoto__moto-5644",
+    "repo": "getmoto/moto",
+    "problem_title": "Regression when using mock_batch_simple since 4.0.7",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "filesystem_versioning",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 43
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 1
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 41,
+    "instance_id": "Project-MONAI__MONAI-2942",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "ToTensor Device",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cloud_api_state",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 25
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 8
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 42,
+    "instance_id": "pandas-dev__pandas-55764",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: pandas 2.1.2 changes how `copy` works",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 6
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 48
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 43,
+    "instance_id": "iterative__dvc-1700",
+    "repo": "iterative/dvc",
+    "problem_title": "Prevent dvc from tracking git.",
+    "difficulty": "hard",
+    "difficulty_score": 9,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "filesystem_versioning",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 36
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 28
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 44,
+    "instance_id": "python__mypy-11448",
+    "repo": "python/mypy",
+    "problem_title": "Better error messages for some `TypeVar` init cases",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 37
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 3
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 45,
+    "instance_id": "iterative__dvc-3727",
+    "repo": "iterative/dvc",
+    "problem_title": "dvc metrics diff vs dvc diff output consistency",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 15
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 11
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 46,
+    "instance_id": "pydantic__pydantic-6293",
+    "repo": "pydantic/pydantic",
+    "problem_title": "[PYD-142] pydantic.dataclass does not work with typing.Annotated",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 21
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 155
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 47,
+    "instance_id": "Project-MONAI__MONAI-1765",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "Unify the input of loss components",
+    "difficulty": "hard",
+    "difficulty_score": 9,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "other",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 123
+    },
+    "test_stats": {
+      "fail_to_pass": 12,
+      "pass_to_pass": 18
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 48,
+    "instance_id": "modin-project__modin-6638",
+    "repo": "modin-project/modin",
+    "problem_title": "Length Mismatch when using `pd.read_excel()`",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 10
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 2362
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 49,
+    "instance_id": "dask__dask-10042",
+    "repo": "dask/dask",
+    "problem_title": "test_parquet.py::test_select_filtered_column[fastparquet]: pandas backend fails to filter NoneType",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 0,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 14
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 586
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 50,
+    "instance_id": "facebookresearch__hydra-614",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "Option to access hydra configs from interpolation",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 0,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 23
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 0
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "no_pass_to_pass"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 51,
+    "instance_id": "pandas-dev__pandas-54643",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "ENH: Pandas 2.0 with pyarrow engine add the argument like 'skip_bad_lines=True'",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 60
+    },
+    "test_stats": {
+      "fail_to_pass": 9,
+      "pass_to_pass": 89
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 52,
+    "instance_id": "conan-io__conan-12695",
+    "repo": "conan-io/conan",
+    "problem_title": "[bug] behaviour when there are spaces in required_conan_version",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 0,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 3
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 22
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 53,
+    "instance_id": "bokeh__bokeh-13443",
+    "repo": "bokeh/bokeh",
+    "problem_title": "Unable to clone models with readonly properties",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 1,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 7
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 111
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 54,
+    "instance_id": "getmoto__moto-6743",
+    "repo": "getmoto/moto",
+    "problem_title": "Allow using s3 accesspoint arns in iam policies",
+    "difficulty": "medium",
+    "difficulty_score": 6,
+    "difficulty_components": {
+      "localization": 1,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "filesystem_versioning",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 44
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 128
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 55,
+    "instance_id": "getmoto__moto-6709",
+    "repo": "getmoto/moto",
+    "problem_title": "DynamoDB: special characters in get_item() projection expression not handled correctly",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 84
+    },
+    "test_stats": {
+      "fail_to_pass": 14,
+      "pass_to_pass": 158
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 56,
+    "instance_id": "Project-MONAI__MONAI-2104",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "Need to deepcopy data in RandCropByPosNegLabeld transform",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "other",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 19
+    },
+    "test_stats": {
+      "fail_to_pass": 4,
+      "pass_to_pass": 8
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 57,
+    "instance_id": "iterative__dvc-5080",
+    "repo": "iterative/dvc",
+    "problem_title": "config: add --list to list all variables and their values",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 31
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 28
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 58,
+    "instance_id": "pandas-dev__pandas-56321",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: Creating a string column on a mask results in NaN being stringyfied and potentially truncated based on the 'maxchar' value of the column",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 10
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 730
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 59,
+    "instance_id": "modin-project__modin-6758",
+    "repo": "modin-project/modin",
+    "problem_title": "Preserve dtypes cache on `df[existing_col] = scalar`",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 86
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 218
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 60,
+    "instance_id": "python__mypy-11213",
+    "repo": "python/mypy",
+    "problem_title": "Untyped functions content show up in mypy output",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 23
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 16
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 61,
+    "instance_id": "pydantic__pydantic-5834",
+    "repo": "pydantic/pydantic",
+    "problem_title": "Numpy type annotations result in ValidatorIterator fields",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 1,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 34
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 873
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 62,
+    "instance_id": "facebookresearch__hydra-1540",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "enhancements to hydra.searchpath",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 13
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 172
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 63,
+    "instance_id": "python__mypy-15846",
+    "repo": "python/mypy",
+    "problem_title": "Constraining a TypeVar to be not None seems impossible.",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 125
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 1
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 64,
+    "instance_id": "conan-io__conan-13450",
+    "repo": "conan-io/conan",
+    "problem_title": "[feature] can't specify c++20 with meson generator",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 32
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 9
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "environment_or_time_sensitive",
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 65,
+    "instance_id": "dask__dask-8462",
+    "repo": "dask/dask",
+    "problem_title": "Chunks/dtype not considered with map_blocks result name",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 0,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 2
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 401
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 66,
+    "instance_id": "modin-project__modin-6951",
+    "repo": "modin-project/modin",
+    "problem_title": "Poor Performance on TPC-H Queries",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 1,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 32
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 892
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "performance_validation_may_be_weak"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 67,
+    "instance_id": "pydantic__pydantic-5868",
+    "repo": "pydantic/pydantic",
+    "problem_title": "Config option `allow_inf_nan` doesn't work for `Decimal`",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 98
+    },
+    "test_stats": {
+      "fail_to_pass": 11,
+      "pass_to_pass": 680
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 68,
+    "instance_id": "bokeh__bokeh-13757",
+    "repo": "bokeh/bokeh",
+    "problem_title": "VBox is not working in 3.4.0rc1",
+    "difficulty": "medium",
+    "difficulty_score": 7,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 0,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 4
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 6
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "environment_or_time_sensitive"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 69,
+    "instance_id": "Project-MONAI__MONAI-506",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "tensor support for squeezedim",
+    "difficulty": "medium",
+    "difficulty_score": 6,
+    "difficulty_components": {
+      "localization": 1,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "protocol_api",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 21
+    },
+    "test_stats": {
+      "fail_to_pass": 7,
+      "pass_to_pass": 7
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 70,
+    "instance_id": "getmoto__moto-7317",
+    "repo": "getmoto/moto",
+    "problem_title": "glue.create_database does not create tags",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "cloud_api_state",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 11
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 52
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 71,
+    "instance_id": "conan-io__conan-11330",
+    "repo": "conan-io/conan",
+    "problem_title": "[feature] Remove or change `copy_symlink_folders` in `conan.tools.files.copy`",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "build_dependency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 64
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 9
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 72,
+    "instance_id": "pandas-dev__pandas-57297",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "BUG: `sort_index` not preserving `index` when `ascending=False`",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 2,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 7
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 65
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 73,
+    "instance_id": "python__mypy-15355",
+    "repo": "python/mypy",
+    "problem_title": "stubgen drops default values for function arguments",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 88
+    },
+    "test_stats": {
+      "fail_to_pass": 8,
+      "pass_to_pass": 366
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 74,
+    "instance_id": "iterative__dvc-4309",
+    "repo": "iterative/dvc",
+    "problem_title": "remote local config does not see existing remote",
+    "difficulty": "medium",
+    "difficulty_score": 8,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 1,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 17
+    },
+    "test_stats": {
+      "fail_to_pass": 1,
+      "pass_to_pass": 16
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 75,
+    "instance_id": "dask__dask-6779",
+    "repo": "dask/dask",
+    "problem_title": "Concatenating then rechunking zarr files uses lots of memory",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "async_concurrency",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 1,
+      "changed_lines": 37
+    },
+    "test_stats": {
+      "fail_to_pass": 2,
+      "pass_to_pass": 47
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 76,
+    "instance_id": "facebookresearch__hydra-1655",
+    "repo": "facebookresearch/hydra",
+    "problem_title": "possible to print `$CONFIG` in hydra help with interpolation resolved?",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "numeric_data",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 2,
+      "changed_lines": 24
+    },
+    "test_stats": {
+      "fail_to_pass": 7,
+      "pass_to_pass": 121
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 77,
+    "instance_id": "bokeh__bokeh-12902",
+    "repo": "bokeh/bokeh",
+    "problem_title": "`load_notebook()` uses non-unique DOM element IDs",
+    "difficulty": "hard",
+    "difficulty_score": 9,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 2,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "parsing_serialization",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 3,
+      "changed_lines": 39
+    },
+    "test_stats": {
+      "fail_to_pass": 3,
+      "pass_to_pass": 51
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 78,
+    "instance_id": "Project-MONAI__MONAI-2780",
+    "repo": "Project-MONAI/MONAI",
+    "problem_title": "Add pad args to all padding transforms",
+    "difficulty": "hard",
+    "difficulty_score": 9,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 1,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "protocol_api",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 38
+    },
+    "test_stats": {
+      "fail_to_pass": 7,
+      "pass_to_pass": 34
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [
+      "feature_request_not_bug"
+    ],
+    "review_notes": []
+  },
+  {
+    "position": 79,
+    "instance_id": "pandas-dev__pandas-53809",
+    "repo": "pandas-dev/pandas",
+    "problem_title": "[DEPR]: Remove literal string/bytes input from `read_excel`, `read_html`, and `read_xml`",
+    "difficulty": "hard",
+    "difficulty_score": 11,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 3,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "cache_incremental",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 47
+    },
+    "test_stats": {
+      "fail_to_pass": 5,
+      "pass_to_pass": 285
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  },
+  {
+    "position": 80,
+    "instance_id": "pydantic__pydantic-5874",
+    "repo": "pydantic/pydantic",
+    "problem_title": "V2 dataclass improvements",
+    "difficulty": "hard",
+    "difficulty_score": 10,
+    "difficulty_components": {
+      "localization": 3,
+      "reasoning": 2,
+      "coupling": 3,
+      "validation": 2,
+      "hint_penalty": 0
+    },
+    "bug_family": "type_system",
+    "candidate_source": "swegym_full_excluding_lite",
+    "gold_patch_stats": {
+      "files": 4,
+      "changed_lines": 37
+    },
+    "test_stats": {
+      "fail_to_pass": 4,
+      "pass_to_pass": 131
+    },
+    "review_status": "needs_manual_review",
+    "review_flags": [],
+    "review_notes": []
+  }
+]

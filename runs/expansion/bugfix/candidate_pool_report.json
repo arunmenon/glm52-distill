@@ -1,0 +1,115 @@
+{
+  "schema_version": "medium_hard_candidate_pool_v1",
+  "candidate_count": 80,
+  "validation": "PASS",
+  "difficulty_rubric": {
+    "formula": "localization(0..3) + reasoning(0..3) + coupling(0..3) + validation(0..2) - implementation_hint_penalty(0..2)",
+    "medium": "score 6..8",
+    "hard": "score 9..11",
+    "principle": "diagnostic difficulty, not gold-patch size alone"
+  },
+  "quality_prefilter": [
+    "non-empty statement, gold patch, test patch, and FAIL_TO_PASS",
+    "well-formed pytest node ids",
+    "gold does not change only tests",
+    "gold <=8 files and <=350 changed lines",
+    "FAIL_TO_PASS <=20",
+    "no strong expected-behavior ambiguity",
+    "no high-confidence implementation leak"
+  ],
+  "selection_policy": {
+    "retained_seed_count": 10,
+    "new_full_excluding_lite_count": 70,
+    "difficulty_targets": {
+      "medium": 56,
+      "hard": 24
+    },
+    "max_per_repo": 10,
+    "max_per_bug_family": 18,
+    "prior_attempts_and_frozen_lists_excluded": 108,
+    "current_expansion_nonseeds_excluded": 14,
+    "approval_state": "CANDIDATES_ONLY_NOT_SPEND_APPROVED"
+  },
+  "by_difficulty": {
+    "medium": 56,
+    "hard": 24
+  },
+  "by_repo": {
+    "Project-MONAI/MONAI": 8,
+    "bokeh/bokeh": 7,
+    "conan-io/conan": 7,
+    "dask/dask": 7,
+    "facebookresearch/hydra": 7,
+    "getmoto/moto": 7,
+    "iterative/dvc": 7,
+    "modin-project/modin": 7,
+    "pandas-dev/pandas": 8,
+    "pydantic/pydantic": 8,
+    "python/mypy": 7
+  },
+  "by_bug_family": {
+    "async_concurrency": 11,
+    "build_dependency": 10,
+    "cache_incremental": 11,
+    "cloud_api_state": 4,
+    "filesystem_versioning": 3,
+    "numeric_data": 11,
+    "other": 4,
+    "parsing_serialization": 11,
+    "protocol_api": 4,
+    "type_system": 11
+  },
+  "by_source": {
+    "retained_expansion_seed": 10,
+    "swegym_full_excluding_lite": 70
+  },
+  "by_review_status": {
+    "retained_seed_needs_repair": 4,
+    "retained_seed": 4,
+    "retained_seed_needs_smoke": 2,
+    "needs_manual_review": 70
+  },
+  "by_review_flag": {
+    "environment_or_time_sensitive": 8,
+    "feature_request_not_bug": 10,
+    "large_gold_patch": 1,
+    "no_pass_to_pass": 2,
+    "performance_task": 1,
+    "performance_validation_may_be_weak": 1,
+    "usage_question": 1
+  },
+  "excluded_reason_counts": {
+    "swegym_lite_member": 230,
+    "difficulty_below_medium": 228,
+    "problem_statement_too_short": 175,
+    "verification_set_too_large": 161,
+    "oversized_for_step_limited_rollout": 88,
+    "malformed_fail_to_pass": 77,
+    "previously_attempted_or_frozen": 36,
+    "rejected_current_expansion_task": 4,
+    "statement_reveals_implementation": 1
+  },
+  "auto_eligible_before_balancing": 1533,
+  "output": "runs/expansion/bugfix/candidate_pool.json",
+  "review_index": "runs/expansion/bugfix/candidate_pool_index.json",
+  "review_markdown": "runs/expansion/bugfix/candidate_pool.md",
+  "provenance": {
+    "full_parquet": {
+      "path": "walk_scratch/swegym_full.parquet",
+      "rows": 2438,
+      "sha256": "60569cea74bb281f7a5579467436a2bc1932c6e0c5f2f7fa0d084392abd9ad97"
+    },
+    "lite_parquet": {
+      "path": "walk_scratch/swegym_lite.parquet",
+      "rows": 230,
+      "sha256": "f3a7cd934e8cc523b6053298d0abb2c82fd7db2b83f9f2ccba5944545aaa4eb1"
+    },
+    "frozen_expansion": {
+      "path": "runs/expansion/bugfix/expansion_tasks.json",
+      "rows": 24,
+      "sha256": "0a2500422191dc0d462cacb03f999c54bcd52cf4ef7d4bdc8ea69f3b8f3ff735"
+    },
+    "candidate_pool_sha256": "4daf5a7dceed50161e23e0eb8de19b8abc45f27e7e95e58d81c24cad41ef106d",
+    "candidate_pool_index_sha256": "aafd40e003dfd2061ca682c02c3a90dc0aecee8fcd2a3b79aa6e65487638e1e4"
+  }
+}

@@ -1,0 +1,1362 @@
+{
+ "snapshot_at": "2026-08-28T17:17:59.951695+00:00",
+ "pool_file": "runs/expansion/bugfix/candidate_pool.json",
+ "pool_sha256_expected": "4daf5a7dceed50161e23e0eb8de19b8abc45f27e7e95e58d81c24cad41ef106d",
+ "registry": "hub.docker.com xingyaoww/sweb.eval.x86_64.*",
+ "policy": {
+  "max_attempts": 3,
+  "retry_sleep_s": 5.0,
+  "classification": {
+   "available": "HTTP 200 on tags endpoint",
+   "missing": "HTTP 404 (terminal on first sight)",
+   "indeterminate": "non-404 failure on all attempts; re-probe before treating as absent"
+  }
+ },
+ "totals": {
+  "available": 77,
+  "missing": 3,
+  "indeterminate": 0
+ },
+ "repo_shortfall": {
+  "dask/dask": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "iterative/dvc": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "getmoto/moto": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "python/mypy": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "conan-io/conan": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "Project-MONAI/MONAI": {
+   "available": 8,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "bokeh/bokeh": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "pandas-dev/pandas": {
+   "available": 6,
+   "missing": 2,
+   "indeterminate": 0
+  },
+  "pydantic/pydantic": {
+   "available": 8,
+   "missing": 0,
+   "indeterminate": 0
+  },
+  "facebookresearch/hydra": {
+   "available": 6,
+   "missing": 1,
+   "indeterminate": 0
+  },
+  "modin-project/modin": {
+   "available": 7,
+   "missing": 0,
+   "indeterminate": 0
+  }
+ },
+ "records": [
+  {
+   "instance_id": "dask__dask-7305",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-7305",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_repair",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:29.639862+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-1681",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-1681",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:30.065906+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-6317",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-6317",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_repair",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:30.392296+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-9395",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-9395",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_repair",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:30.750261+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-5885",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-5885",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:31.099963+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-16154",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-16154",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:31.460067+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-7607",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-7607",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_smoke",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:31.850504+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-10917",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-10917",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_smoke",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:32.269476+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-578",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-578",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:32.664300+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13641",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13641",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:33.016777+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-14835",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-14835",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed_needs_repair",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:33.417210+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-50672",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-50672",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:33.808645+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-9004",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-9004",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:34.191597+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-1458",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-1458",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:34.520226+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-14988",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-14988",
+   "candidate_source": "retained_expansion_seed",
+   "review_status": "retained_seed",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:34.862113+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-6618",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-6618",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:35.248846+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-2465",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-2465",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:35.655172+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-50151",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-50151",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:36.054931+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-14532",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-14532",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:36.435739+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-8590",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-8590",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:36.791106+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13636",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13636",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:37.190131+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-6100",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-6100",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:37.572816+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-6759",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-6759",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:37.956131+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-14051",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-14051",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:38.299484+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-5949",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-5949",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:38.649581+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-952",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-952",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:39.032959+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-9137",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-9137",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:39.499534+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-3493",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-3493",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:39.852285+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-47780",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-47780",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:40.255261+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-8947",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-8947",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:40.628566+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-10054",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-10054",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:41.012173+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-1690",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-1690",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:41.408887+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-1725",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-1725",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:41.816285+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-10960",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-10960",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:42.179766+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-1422",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-1422",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:42.577517+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-6992",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-6992",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:42.965918+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-5946",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-5946",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:43.317608+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13608",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13608",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:43.716175+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13800",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13800",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:44.083426+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-5644",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-5644",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:44.474575+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-2942",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-2942",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:44.839094+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-55764",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-55764",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "missing",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:45.228427+00:00",
+     "http_status": 404,
+     "reason": "Not Found"
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-1700",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-1700",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:45.553288+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-11448",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-11448",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:45.932088+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-3727",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-3727",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:46.334425+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-6293",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-6293",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:46.717333+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-1765",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-1765",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:47.101833+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-6638",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-6638",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:47.501625+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-10042",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-10042",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:47.849476+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-614",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-614",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:48.244824+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-54643",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-54643",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:48.641413+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-12695",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-12695",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:49.038415+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13443",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13443",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:49.435403+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-6743",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-6743",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:49.842254+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-6709",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-6709",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:50.239059+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-2104",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-2104",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:50.643816+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-5080",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-5080",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:51.007376+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-56321",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-56321",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:51.408406+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-6758",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-6758",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:51.741616+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-11213",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-11213",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:52.126588+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-5834",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-5834",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:52.529521+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-1540",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-1540",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "missing",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:52.916863+00:00",
+     "http_status": 404,
+     "reason": "Not Found"
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-15846",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-15846",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:53.235501+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-13450",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-13450",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:53.615214+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-8462",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-8462",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:54.001209+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "modin-project__modin-6951",
+   "repo": "modin-project/modin",
+   "image": "xingyaoww/sweb.eval.x86_64.modin-project_s_modin-6951",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:54.395125+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-5868",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-5868",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:54.761030+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-13757",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-13757",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:55.158693+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-506",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-506",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:55.558953+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "getmoto__moto-7317",
+   "repo": "getmoto/moto",
+   "image": "xingyaoww/sweb.eval.x86_64.getmoto_s_moto-7317",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:55.933683+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "conan-io__conan-11330",
+   "repo": "conan-io/conan",
+   "image": "xingyaoww/sweb.eval.x86_64.conan-io_s_conan-11330",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:56.274567+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-57297",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-57297",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:56.663579+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "python__mypy-15355",
+   "repo": "python/mypy",
+   "image": "xingyaoww/sweb.eval.x86_64.python_s_mypy-15355",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:57.005019+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "iterative__dvc-4309",
+   "repo": "iterative/dvc",
+   "image": "xingyaoww/sweb.eval.x86_64.iterative_s_dvc-4309",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "medium",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:57.422886+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "dask__dask-6779",
+   "repo": "dask/dask",
+   "image": "xingyaoww/sweb.eval.x86_64.dask_s_dask-6779",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:57.774186+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "facebookresearch__hydra-1655",
+   "repo": "facebookresearch/hydra",
+   "image": "xingyaoww/sweb.eval.x86_64.facebookresearch_s_hydra-1655",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:58.125983+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "bokeh__bokeh-12902",
+   "repo": "bokeh/bokeh",
+   "image": "xingyaoww/sweb.eval.x86_64.bokeh_s_bokeh-12902",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:58.499277+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "Project-MONAI__MONAI-2780",
+   "repo": "Project-MONAI/MONAI",
+   "image": "xingyaoww/sweb.eval.x86_64.project-monai_s_monai-2780",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:58.842747+00:00",
+     "http_status": 200
+    }
+   ]
+  },
+  {
+   "instance_id": "pandas-dev__pandas-53809",
+   "repo": "pandas-dev/pandas",
+   "image": "xingyaoww/sweb.eval.x86_64.pandas-dev_s_pandas-53809",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "missing",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:59.239565+00:00",
+     "http_status": 404,
+     "reason": "Not Found"
+    }
+   ]
+  },
+  {
+   "instance_id": "pydantic__pydantic-5874",
+   "repo": "pydantic/pydantic",
+   "image": "xingyaoww/sweb.eval.x86_64.pydantic_s_pydantic-5874",
+   "candidate_source": "swegym_full_excluding_lite",
+   "review_status": "needs_manual_review",
+   "heuristic_difficulty": "hard",
+   "result": "available",
+   "attempts": [
+    {
+     "n": 1,
+     "at": "2026-08-28T17:17:59.562309+00:00",
+     "http_status": 200
+    }
+   ]
+  }
+ ]
+}
