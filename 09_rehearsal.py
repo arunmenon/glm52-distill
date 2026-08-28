@@ -22,6 +22,7 @@ Usage:
 
 import base64
 import json
+import os
 import re
 import subprocess
 import sys
@@ -176,6 +177,29 @@ def make_env(image: str, timeout: int):
         container_timeout="3h")
 
 
+# SWE-Gym images ship the repo's FULL git history, including the upstream
+# fix the task asks for; 37/45 pilot trajectories retrieved it via git
+# log/show (external review 2026-08). Delete every ref except the checked-out
+# base commit and prune, so new trajectories are independent diagnoses. The
+# packer's history_assisted flag doubles as the leak detector: any True row
+# generated after this landed means the strip failed.
+STRIP_CMD = (
+    "cd /testbed && git checkout -q --detach HEAD 2>/dev/null; "
+    "git for-each-ref --format='%(refname)' refs/heads refs/tags "
+    "refs/remotes | xargs -r -n 1 git update-ref -d; "
+    "git reflog expire --expire=now --all 2>/dev/null; "
+    "git gc --prune=now -q 2>/dev/null; "
+    "git log --oneline -1")
+
+
+def strip_future_history(env):
+    if os.environ.get("KEEP_GIT_HISTORY") == "1":
+        return
+    out = env.execute(STRIP_CMD)
+    if out.get("returncode") not in (0, None):
+        raise RuntimeError(f"git history strip failed: {out}")
+
+
 API_TIMEOUT_S = 300  # library hardcodes 60s; long GLM thinking steps exceed it
 
 
@@ -232,6 +256,7 @@ def rollout(instance: dict, idx: int, out_dir: Path) -> dict:
                       "reasoning": {"enabled": True}},
         cost_tracking="ignore_errors")
     env = make_env(image_name(instance["instance_id"]), CMD_TIMEOUT_S)
+    strip_future_history(env)
     started = time.time()
     try:
         agent = DefaultAgent(
