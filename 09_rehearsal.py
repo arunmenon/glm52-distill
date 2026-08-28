@@ -197,7 +197,8 @@ STRIP_CMD = (
 def strip_future_history(env):
     if os.environ.get("KEEP_GIT_HISTORY") == "1":
         return
-    out = env.execute(STRIP_CMD)
+    # mini-swe-agent 2.4.6 execute() takes an action dict, not a string
+    out = env.execute({"command": STRIP_CMD})
     if out.get("returncode") not in (0, None):
         raise RuntimeError(f"git history strip failed: {out}")
 
