@@ -27,7 +27,9 @@ from pathlib import Path
 import pandas as pd
 
 REPO_DIR = Path(__file__).parent
-RUNS_DIR = REPO_DIR / "runs" / "rehearsal"
+# All run directories holding <iid>/result.json ledgers to pack together.
+RUNS_DIRS = [REPO_DIR / "runs" / "rehearsal",
+             REPO_DIR / "runs" / "walk_regen" / "bugfix"]
 OUT_DIR = REPO_DIR / "packed" / "trajectories"
 REPORT = REPO_DIR / "trajectory_pack_report.json"
 TOKENIZER_JSON = Path("/private/tmp/claude-501/-Users-arunmenon-projects-"
@@ -91,7 +93,8 @@ def main():
 
     rows, funnel = [], {"tasks": 0, "rollouts": 0, "verified": 0,
                         "packed": 0, "over_cap": 0, "clean_errors": 0}
-    for result_file in sorted(RUNS_DIR.glob("*/result.json")):
+    for result_file in sorted(
+            f for d in RUNS_DIRS for f in d.glob("*/result.json")):
         result = json.loads(result_file.read_text())
         funnel["tasks"] += 1
         for rollout_rec in result.get("rollouts", []):

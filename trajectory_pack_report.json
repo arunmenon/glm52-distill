@@ -1,25 +1,26 @@
 {
-  "date": "2026-07-30",
+  "date": "2026-08-28",
   "format": "fc_bash_v1",
   "loss_mask_convention": "trainable=assistant turns only",
   "funnel": {
-    "tasks": 10,
-    "rollouts": 20,
-    "verified": 7,
-    "packed": 7,
-    "over_cap": 0,
+    "tasks": 55,
+    "rollouts": 144,
+    "verified": 45,
+    "packed": 45,
+    "over_cap": 32,
     "clean_errors": 0
   },
   "by_tier": {
-    "easy": 2,
-    "medium": 5
+    "easy": 17,
+    "hard": 2,
+    "medium": 26
   },
   "token_stats": {
-    "min": 11739,
-    "mean": 17418,
-    "max": 29494,
+    "min": 11713,
+    "mean": 41980,
+    "max": 78641,
     "cap": 32768,
-    "tokenizer": "glm52"
+    "tokenizer": "char-estimate"
   },
   "output": "packed/trajectories/trajectories_v0.parquet"
 }
