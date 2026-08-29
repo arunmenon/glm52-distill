@@ -194,12 +194,14 @@ def main():
         warmup_ratio=0.03,
         bf16=True,
         logging_steps=10,
-        # the trajectory corpus is ~100-200 optimizer steps total; 500 here
-        # meant a crashed box lost the whole run
-        save_steps=25,
+        # the trajectory corpus can be as few as 10 optimizer steps; any
+        # save interval above that loses the whole run to a post-train crash
+        save_steps=5,
         save_total_limit=3,
-        eval_strategy="steps",
-        eval_steps=50,
+        # in-Trainer eval OOMs: eval forwards run without gradient
+        # checkpointing, and a 63k-token sdpa attention materializes ~32GB.
+        # The transfer screen (05-07) is the real eval; skip Trainer eval.
+        eval_strategy="no",
         max_grad_norm=1.0,
         report_to=report_to,
         run_name=f"{args.out.split('/')[-1]}_a{args.alpha}_T{args.temperature}",
