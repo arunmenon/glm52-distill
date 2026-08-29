@@ -197,7 +197,12 @@ def main():
         # the trajectory corpus can be as few as 10 optimizer steps; any
         # save interval above that loses the whole run to a post-train crash
         save_steps=5,
-        save_total_limit=3,
+        save_total_limit=2,
+        # ZeRO-3 checkpoints include ~12x-model-size fp32 optimizer state
+        # (117GB for a 9B) — one checkpoint filled a 150GB disk and ENOSPC'd
+        # the final save. Weights-only checkpoints lose optimizer resume but
+        # keep the run's artifacts deliverable.
+        save_only_model=True,
         # in-Trainer eval OOMs: eval forwards run without gradient
         # checkpointing, and a 63k-token sdpa attention materializes ~32GB.
         # The transfer screen (05-07) is the real eval; skip Trainer eval.
