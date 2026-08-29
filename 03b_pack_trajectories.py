@@ -30,7 +30,8 @@ import pandas as pd
 REPO_DIR = Path(__file__).parent
 # All run directories holding <iid>/result.json ledgers to pack together.
 RUNS_DIRS = [REPO_DIR / "runs" / "rehearsal",
-             REPO_DIR / "runs" / "walk_regen" / "bugfix"]
+             REPO_DIR / "runs" / "walk_regen" / "bugfix",
+             REPO_DIR / "runs" / "expansion" / "bugfix"]
 OUT_DIR = REPO_DIR / "packed" / "trajectories"
 REPORT = REPO_DIR / "trajectory_pack_report.json"
 TOKENIZER_JSON = Path("/private/tmp/claude-501/-Users-arunmenon-projects-"
@@ -146,7 +147,13 @@ def main():
                 "repo": result["repo"], "tier": result["tier"],
                 "rollout": rollout_rec["rollout"],
                 "source": result_file.parent.parent.name,
+                # history_assisted = ran git-history commands. Only damning
+                # when the container still HAD future history: expansion runs
+                # strip refs past the base commit before rollout, so their
+                # git log/show hits see legitimate past commits only.
                 "history_assisted": is_history_assisted(messages),
+                "history_stripped":
+                    result_file.parent.parent.parent.name == "expansion",
                 "format": FORMAT_ID,
                 "teacher_model": traj["model"],
                 "n_steps": rollout_rec.get("n_steps"),
