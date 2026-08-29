@@ -162,35 +162,6 @@ def main():
     set_seed(args.seed)
     tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
 
-    try:
-        model = AutoModelForCausalLM.from_pretrained(
-            args.model, torch_dtype=torch.bfloat16,
-            attn_implementation="flash_attention_2", trust_remote_code=True,
-        )
-    except (ImportError, ValueError):
-        model = AutoModelForCausalLM.from_pretrained(
-            args.model, torch_dtype=torch.bfloat16,
-            attn_implementation="sdpa", trust_remote_code=True,
-        )
-    model.gradient_checkpointing_enable()
-    model.config.use_cache = False
-
-    if args.lora:
-        from peft import LoraConfig, get_peft_model
-        # REQUIRED with gradient checkpointing: without this, inputs carry no
-        # grad and LoRA adapters silently receive zero gradient.
-        model.enable_input_require_grads()
-        lcfg = LoraConfig(
-            r=args.lora_rank, lora_alpha=2 * args.lora_rank, lora_dropout=0.05,
-            target_modules="all-linear", task_type="CAUSAL_LM",
-            # MoE students (GLM-4.5-Air): keep LoRA off the expert routers —
-            # adapting them destabilizes routing. Matches `mlp.gate`, not
-            # `gate_proj`. Harmless no-op on dense models.
-            exclude_modules=["gate"],
-        )
-        model = get_peft_model(model, lcfg)
-        model.print_trainable_parameters()
-
     ds = load_from_disk(args.data)
     if args.max_seq_len:
         before = {k: len(ds[k]) for k in ds}
@@ -250,6 +221,39 @@ def main():
         print(f"targs: dropping {k} (absent in this transformers version)")
         targs_kwargs.pop(k)
     targs = TrainingArguments(**targs_kwargs)
+
+    # Model MUST load after TrainingArguments: transformers only shards at load
+    # (zero.Init) once the deepspeed config is registered — loading first left
+    # every rank holding the full model + grads (~42GB flat, OOM at any cap).
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model, torch_dtype=torch.bfloat16,
+            attn_implementation="flash_attention_2", trust_remote_code=True,
+        )
+    except (ImportError, ValueError):
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model, torch_dtype=torch.bfloat16,
+            attn_implementation="sdpa", trust_remote_code=True,
+        )
+    model.gradient_checkpointing_enable()
+    model.config.use_cache = False
+
+    if args.lora:
+        from peft import LoraConfig, get_peft_model
+        # REQUIRED with gradient checkpointing: without this, inputs carry no
+        # grad and LoRA adapters silently receive zero gradient.
+        model.enable_input_require_grads()
+        lcfg = LoraConfig(
+            r=args.lora_rank, lora_alpha=2 * args.lora_rank, lora_dropout=0.05,
+            target_modules="all-linear", task_type="CAUSAL_LM",
+            # MoE students (GLM-4.5-Air): keep LoRA off the expert routers —
+            # adapting them destabilizes routing. Matches `mlp.gate`, not
+            # `gate_proj`. Harmless no-op on dense models.
+            exclude_modules=["gate"],
+        )
+        model = get_peft_model(model, lcfg)
+        model.print_trainable_parameters()
+
 
     trainer = KDTrainer(
         model=model,
