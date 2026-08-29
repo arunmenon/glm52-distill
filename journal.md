@@ -593,3 +593,55 @@ reasoning, coverage 1.0 on every shard. Store now holds 45 KD shards
 Data verified in three places (VM, Mac runs/walk_regen/, HF store:
 105 result.json, 232 trajectories, 45 npz). GPU box 48576207 DESTROYED;
 env VM 48567337 retained ($0.087/hr) pending slices 2-3 work.
+
+## 2026-08-28/29 — Expansion era: review-hardened corpus, strip-clean generation, student v0
+
+**External review absorbed** (researcher, 2026-08-28): 37/45 trajectories had
+retrieved the upstream fix via container git history ("repair-by-retrieval").
+Response: history_assisted labels in the packer, 80k train cap (32k default
+silently dropped 32/45), stale mt_qwen3 deprecated, real provenance column.
+Runner change: STRIP_CMD deletes all refs past base commit before rollout —
+new trajectories are independent diagnoses by construction.
+
+**Expansion pipeline** (Codex-assisted): 80-candidate reservoir → 42 review
+survivors → 36 frozen smoke queue (hard cap 4) → gold smoke 29 PASS / 7 FAIL
+(base-fail/gold-pass, caught 7 broken harnesses incl. flaky bokeh gold
+tests) → decontam CLEAN → 29-task run list. Docker Hub preflight root-caused
+the MONAI "misses": image_name() never lowercased (mixed-case repos 400 on
+hub API and would have crashed docker pull) — 8 MONAI images existed all
+along. Fixed; 7 historical false-miss tasks re-eligible.
+
+**Generation (strip live, limits raised 75 steps/60 min after early
+rollouts proved the teacher needs room without the answer key):**
+29/29 sealed, 95 rollouts, 10 tasks verified (15 verified rollouts):
+easy 5/5 100%, medium 5/23 22%, hard 0/1. THE number for RUN pricing:
+unassisted medium costs ~2.5x the history-assisted rate. ~$1.80/verified
+trajectory all-in. Mid-run: queue resorted by reviewer difficulty_score
+(cheapest diagnosis first) — user call, correct one.
+
+**Student v0** (Qwen3.5-9B, SFT on 44 traj at 64k cap, 10 steps, 2 epochs,
+1x RTX PRO 6000 96GB after 4x48GB proved wrong-shaped): the seven env traps,
+each now committed as config/code: transformers v5 API break (version-
+adaptive TrainingArguments), qwen3_5 arch needs v5 + local-dir load (hub
+resolver mangles Qwen's shard names), liger fused CE (80k x 248k logits =
+40GB), fla kernels (naive delta-rule path OOMs), model load AFTER
+TrainingArguments (else zero.Init never shards: 42GB flat/rank), in-Trainer
+eval disabled (eval forward at 63k = 32GB attention even on 96GB),
+save_only_model (ZeRO-3 checkpoint w/ optimizer = 117GB, filled disk at the
+finish line and lost run #2's weights). Run #3 clean: early CE 0.33-0.65,
+model serves and answers sanely after tensor rename (saved names kept the
+multimodal language_model prefix vLLM rejects).
+
+**Credit exhaustion** mid-anchor-eval: $49.29 -> $0. Breakdown: teacher
+$17.72 (14h — the plan working, unassisted rollouts are slow), Kansas
+trainer $10.57 (13h incl. the debugging arc), Poland OOM-saga box $3.29,
+env VM $0.99, storage+bandwidth ~$2 (incl. days of stopped-VM bleed from
+48567337 — lesson: DESTROY, never stop). Zero data loss: sync-on-seal had
+everything on HF before the stop.
+
+**Corpus v1 on HF**: 60 verified rollouts / 42 tasks
+(history_stripped column partitions 15 strip-clean rows from 37 legacy
+assisted + 8 legacy independent), student dataset 58 rows @ 80k
+(48 train/10 val), DPO 26 pairs, 60 KD shards. student_v0 + checkpoints
+uploaded. PENDING on ~$10 top-up: anchor rerun, SWE screen, terminal-bench
+before/after — the transfer verdict that sizes RUN.
