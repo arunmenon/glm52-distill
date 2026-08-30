@@ -668,3 +668,19 @@ recipe passes the gate); (2) the sweep's mix/lr/epochs grid is precisely
 targeted at the observed failure; (3) KD-alpha promotes from enhancement to
 likely-primary once aligned shards exist. Screen runs synced to HF
 (expansion/screen). Eval-phase spend: ~$6 of the $15 top-up.
+
+## 2026-08-30 — Shakedown crash + recovery (trials live again)
+
+Trial 1 (a9c55f0c, mix=0, lr=5e-6, 1ep) sealed PASS: GSM8K 0.781,
+IFEval-p 0.481, IFEval-i 0.580 — all above floors; 1-epoch pure arm sags
+only ~3.3pts vs v0's 15.5pt collapse. Conductor then died: prune_finals'
+background hf-upload launch left stdin attached, sshd held the channel,
+Box.ssh raised raw TimeoutExpired (caught nowhere). Restart tripped three
+more guards honestly: code_rev freeze (fixed via --accept-code-drift +
+audit log; trials still verify pinned rev on box), data digest poisoned
+by HF cache-*.arrow written during training (digest now excludes derived
+caches; verified reproduces pinned value), baseline identity keyed to
+conductor HEAD instead of pinned rev. Four commits: 7c204a9, f15c589,
+c8e098a, 9566ea4. Conductor resumed, adopted trial 1, launched trial 2
+(d62fa0fc, 20% mix). Box never idled past the lease window; watchdog
+money-guard never needed to fire.
