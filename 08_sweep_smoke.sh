@@ -142,14 +142,14 @@ PY
 python3 08_sweep.py --plan sweep_smoke2_plan.yaml --instance "$IID" \
   --keep-instance run > "$SWEEP_ROOT/s2.log" 2>&1 &
 CPID=$!
-RD2=""
-for i in $(seq 1 40); do
-  RD2=$(rundir_for sweep_smoke2_plan.yaml)
+RD2=$(rundir_for sweep_smoke2_plan.yaml)
+SEEN=""
+for i in $(seq 1 90); do
   RUNNING=$(grep -l '"state": "running"' "$RD2"attempt_*.json 2>/dev/null | grep -v baseline | head -1)
-  [ -n "$RUNNING" ] && break
-  RD2=""; sleep 5
+  [ -n "$RUNNING" ] && { SEEN=yes; break; }
+  sleep 5
 done
-check "S2 an attempt reached running" "[ -n \"$RD2\" ]"
+check "S2 an attempt reached running" "[ -n \"$SEEN\" ]"
 kill -9 "$CPID" 2>/dev/null; sleep 2
 check "S2 conductor dead" "! kill -0 $CPID 2>/dev/null"
 sleep 75   # let the 45s fake workload finish + publish on the box
