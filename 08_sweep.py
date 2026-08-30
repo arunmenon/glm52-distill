@@ -63,7 +63,9 @@ SWEEP_ROOT = Path(os.environ.get("SWEEP_ROOT", REPO_DIR / "runs" / "sweep"))
 SSH_OPTS = ["-o", "StrictHostKeyChecking=accept-new", "-o", "BatchMode=yes",
             "-o", "ConnectTimeout=20", "-o", "ServerAliveInterval=15",
             "-o", "ServerAliveCountMax=3"]
-VAST_API = "https://console.vast.ai/api/v0"
+# override with a mock server for local certification
+VAST_API = os.environ.get("VAST_API_BASE",
+                          "https://console.vast.ai/api/v0")
 POLL_S = 60
 LAUNCH_ACK_S = 180
 LEASE_TTL_S = 900
@@ -345,6 +347,52 @@ json.dump({{"status": "success", "trial_id": "{tid}",
            "env_digest": os.environ.get("ENV_DIGEST", "")}},
           open(t + "/result.tmp", "w"))
 os.replace(t + "/result.tmp", t + "/result.json")
+PYEOF
+echo TRIAL_DONE
+"""
+
+
+
+# Certification mode (plan fixed.fake_workload: true): the full protocol —
+# pgid ack, wall timer, heartbeat, staged->atomic result — with a sleep
+# instead of train+eval. Money/kill/adopt paths are exercised for cents.
+FAKE_TRIAL_SCRIPT = r"""#!/bin/bash
+set -euo pipefail
+T={ns_dir}/trials/{tid}/{auid}
+mkdir -p $T
+exec > $T/trial.log 2>&1
+PGID=$(ps -o pgid= -p $$ | tr -dc 0-9)
+printf '%s {auid}\n' "$PGID" > $T/pgid.tmp && mv $T/pgid.tmp $T/pgid
+( sleep {deadline_s}; kill -- -$PGID 2>/dev/null ) &
+WALL=$!
+( while kill -0 $$ 2>/dev/null; do touch $T/heartbeat; sleep 5; done ) &
+HB=$!
+finish() {{ kill $WALL $HB 2>/dev/null || true; }}
+trap 'finish' EXIT
+FREE_GB=$(df -BG --output=avail / | tail -1 | tr -dc 0-9)
+[ "$FREE_GB" -ge {min_free_gb} ] || {{
+  python3 - <<PYEOF
+import json, os
+t = "{ns_dir}/trials/{tid}/{auid}"
+json.dump({{"status": "failed", "reason": "disk_low",
+           "trial_id": "{tid}", "attempt_uuid": "{auid}"}},
+          open(t + "/result.tmp", "w"))
+os.replace(t + "/result.tmp", t + "/result.json")
+PYEOF
+  exit 1; }}
+sleep {fake_sleep}
+python3 - <<PYEOF
+import json, os
+t = "{ns_dir}/trials/{tid}/{auid}"
+json.dump({{"status": "success", "trial_id": "{tid}",
+           "attempt_uuid": "{auid}",
+           "metrics": {{"gsm8k_strict": 0.78, "gsm8k_flexible": 0.7,
+                       "ifeval_prompt_strict_ts": 0.48,
+                       "ifeval_inst_strict_ts": 0.56}},
+           "env_digest": "fakeenv"}},
+          open(t + "/staged.tmp", "w"))
+os.replace(t + "/staged.tmp", t + "/staged.json")
+os.rename(t + "/staged.json", t + "/result.json")
 PYEOF
 echo TRIAL_DONE
 """
@@ -850,9 +898,12 @@ def main():
             print("running same-environment baseline eval ...")
             st = sweep.launch(
                 {"trial_id": base_id, "config": base_cfg},
-                BASELINE_SCRIPT,
-                extra={"model_path": plan["fixed"]["model_path"],
-                       "tp": plan["fixed"]["tp"]})
+                (FAKE_TRIAL_SCRIPT if plan["fixed"].get("fake_workload")
+                 else BASELINE_SCRIPT),
+                extra=({"fake_sleep": plan["fixed"].get("fake_sleep_s", 60)}
+                       if plan["fixed"].get("fake_workload") else
+                       {"model_path": plan["fixed"]["model_path"],
+                        "tp": plan["fixed"]["tp"]}))
             if st != "success":
                 sys.exit(f"baseline eval {st}; gates impossible")
             a = read_attempt(run_dir, base_id)
@@ -885,7 +936,12 @@ def main():
                 cfg = t["config"]
                 print(f"  {t['trial_id']} mix={cfg['mix_ratio']} "
                       f"lr={cfg['lr']} ep={cfg['epochs']}")
-                st = sweep.launch(t, TRIAL_SCRIPT)
+                tpl = (FAKE_TRIAL_SCRIPT
+                       if plan["fixed"].get("fake_workload")
+                       else TRIAL_SCRIPT)
+                st = sweep.launch(t, tpl, extra=(
+                    {"fake_sleep": plan["fixed"].get("fake_sleep_s", 60)}
+                    if plan["fixed"].get("fake_workload") else None))
                 print("   ->", st)
                 if st == "success":
                     sweep.prune_finals()
