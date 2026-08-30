@@ -902,8 +902,11 @@ def main():
     code_rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO_DIR,
                               capture_output=True, text=True).stdout.strip()
     # digests: whole dataset dir + model identity files (r3 f9)
+    # exclude HF datasets' derived cache-*.arrow: training writes them into
+    # the dataset dir, and they must not change the pinned payload digest
     data_digest = box.ssh_ok(
-        f"cd {plan['fixed']['data_path']} && find . -type f | sort "
+        f"cd {plan['fixed']['data_path']} && "
+        f"find . -type f ! -name 'cache-*.arrow' | sort "
         f"| xargs sha256sum | sha256sum | cut -c1-12").strip()
     model_digest = box.ssh_ok(
         f"cd {plan['fixed']['model_path']} && "
