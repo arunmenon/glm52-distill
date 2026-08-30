@@ -146,9 +146,17 @@ class Box:
         if inst.get("actual_status") != "running":
             sys.exit(f"instance {instance_id} not running: "
                      f"{inst.get('actual_status')}")
-        self.ip = inst.get("ssh_host") or inst["public_ipaddr"]
-        self.port = (inst.get("ssh_port")
-                     or inst["ports"]["22/tcp"][0]["HostPort"])
+        # direct mapping first: box-local authorized_keys work there; the
+        # ssh_host proxy requires Vast-registered keys (bit the shakedown)
+        ports = (inst.get("ports") or {}).get("22/tcp")
+        if ports and inst.get("public_ipaddr"):
+            self.ip = inst["public_ipaddr"]
+            self.port = ports[0]["HostPort"]
+        else:
+            self.ip = inst.get("ssh_host")
+            self.port = inst.get("ssh_port")
+        if not (self.ip and self.port):
+            sys.exit("no usable ssh coordinates for instance")
         self.refresh_dph()
 
     def refresh_dph(self) -> float:
