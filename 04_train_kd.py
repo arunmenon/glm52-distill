@@ -156,6 +156,12 @@ def main():
                     help="drop rows longer than this (0=none); checkpointed "
                          "layer inputs alone are ~0.4MB/token on a 9B — "
                          "sequences past ~65k cannot fit a 48GB card")
+    ap.add_argument("--mix-data", default="",
+                    help="hub id of a general instruct dataset (chat 'messages'"
+                         " column) to interleave against format collapse — "
+                         "44 same-format trajectories cost v0 ~12 IFEval pts")
+    ap.add_argument("--mix-ratio", type=float, default=0.25,
+                    help="fraction of train rows drawn from --mix-data")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -173,6 +179,44 @@ def main():
     if args.max_train_samples and len(ds["train"]) > args.max_train_samples:
         ds["train"] = ds["train"].select(range(args.max_train_samples))
         print(f"proxy rung: train limited to {args.max_train_samples} samples")
+
+    if args.mix_data:
+        # tokenize general chat rows through the SAME template/mask rules as
+        # trajectories (assistant turns trainable) so the mix differs only
+        # in content, never in convention
+        import random as _random
+        from datasets import Dataset, concatenate_datasets, load_dataset
+        n_traj = len(ds["train"])
+        n_mix = max(1, int(n_traj * args.mix_ratio / (1 - args.mix_ratio)))
+        general = load_dataset(args.mix_data, split="train")
+        general = general.shuffle(seed=args.seed).select(
+            range(min(n_mix * 3, len(general))))
+        mix_rows = []
+        for ex in general:
+            msgs = ex.get("messages") or ex.get("conversations")
+            if not msgs:
+                continue
+            try:
+                ids = tok.apply_chat_template(msgs, tokenize=True)
+            except Exception:
+                continue
+            if len(ids) > (args.max_seq_len or 32768):
+                continue
+            # trainable span = everything (general chat is short; per-turn
+            # masking matters far less than presence of diverse formats)
+            mix_rows.append({"input_ids": ids, "labels": list(ids)})
+            if len(mix_rows) >= n_mix:
+                break
+        for r in mix_rows:
+            for col in ds["train"].column_names:
+                if col not in r:
+                    r[col] = None
+        ds["train"] = concatenate_datasets(
+            [ds["train"], Dataset.from_list(mix_rows)]).shuffle(
+                seed=args.seed)
+        print(f"mix-data: +{len(mix_rows)} general rows "
+              f"({args.mix_ratio:.0%} target) -> train={len(ds['train'])}")
+
     has_topk = "topk_ids" in ds["train"].column_names
 
     # W&B only when actually configured; otherwise a headless VM hangs at the
