@@ -967,7 +967,11 @@ def main():
     try:
         # baseline: content-addressed inside the namespace (r3 f4)
         base_id = "baseline"
-        base_cfg = {"model_digest": model_digest, "code_rev": code_rev,
+        # identity must track the manifest's PINNED rev (what trials run),
+        # not the conductor's HEAD, or --accept-code-drift restarts would
+        # orphan a valid baseline
+        base_cfg = {"model_digest": model_digest,
+                    "code_rev": manifest["code_rev"],
                     "eval_settings": EVAL_SETTINGS}
         prev_base = read_attempt(run_dir, base_id)
         if (prev_base.get("state") == "success"
