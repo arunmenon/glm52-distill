@@ -24,6 +24,7 @@ Launch:
 
 import argparse
 import os
+import sys
 
 import torch
 import torch.nn.functional as F
@@ -180,27 +181,35 @@ def main():
         ds["train"] = ds["train"].select(range(args.max_train_samples))
         print(f"proxy rung: train limited to {args.max_train_samples} samples")
 
-    if args.mix_data:
+    if args.mix_ratio and not (0 < args.mix_ratio < 1) and args.mix_data:
+        sys.exit(f"--mix-ratio must be in (0,1), got {args.mix_ratio}")
+    if args.mix_data and args.mix_ratio > 0:
         # tokenize general chat rows through the SAME template/mask rules as
         # trajectories (assistant turns trainable) so the mix differs only
         # in content, never in convention
         import random as _random
         from datasets import Dataset, concatenate_datasets, load_dataset
         n_traj = len(ds["train"])
-        n_mix = max(1, int(n_traj * args.mix_ratio / (1 - args.mix_ratio)))
+        n_mix = int(round(n_traj * args.mix_ratio / (1 - args.mix_ratio)))
+        if has_topk_probe := ("topk_ids" in ds["train"].column_names):
+            sys.exit("--mix-data unsupported on top-K KD packs: mix rows "
+                     "would carry None topk arrays into the collator")
         general = load_dataset(args.mix_data, split="train")
         general = general.shuffle(seed=args.seed).select(
             range(min(n_mix * 3, len(general))))
-        mix_rows = []
+        mix_rows, rejected = [], {"no_messages": 0, "template": 0, "too_long": 0}
         for ex in general:
             msgs = ex.get("messages") or ex.get("conversations")
             if not msgs:
+                rejected["no_messages"] += 1
                 continue
             try:
                 ids = tok.apply_chat_template(msgs, tokenize=True)
             except Exception:
+                rejected["template"] += 1
                 continue
             if len(ids) > (args.max_seq_len or 32768):
+                rejected["too_long"] += 1
                 continue
             # trainable span = everything (general chat is short; per-turn
             # masking matters far less than presence of diverse formats)
@@ -214,8 +223,12 @@ def main():
         ds["train"] = concatenate_datasets(
             [ds["train"], Dataset.from_list(mix_rows)]).shuffle(
                 seed=args.seed)
+        if len(mix_rows) < n_mix:
+            sys.exit(f"mix-data underfilled: {len(mix_rows)}/{n_mix} "
+                     f"usable rows (rejected: {rejected})")
         print(f"mix-data: +{len(mix_rows)} general rows "
-              f"({args.mix_ratio:.0%} target) -> train={len(ds['train'])}")
+              f"({args.mix_ratio:.0%} target) -> train={len(ds['train'])} "
+              f"rejected={rejected}")
 
     has_topk = "topk_ids" in ds["train"].column_names
 
