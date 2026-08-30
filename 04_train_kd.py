@@ -163,6 +163,8 @@ def main():
                          "44 same-format trajectories cost v0 ~12 IFEval pts")
     ap.add_argument("--mix-ratio", type=float, default=0.25,
                     help="fraction of train rows drawn from --mix-data")
+    ap.add_argument("--mix-data-revision", default=None,
+                    help="pin the mix dataset revision (trial-id integrity)")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -194,7 +196,8 @@ def main():
         if has_topk_probe := ("topk_ids" in ds["train"].column_names):
             sys.exit("--mix-data unsupported on top-K KD packs: mix rows "
                      "would carry None topk arrays into the collator")
-        general = load_dataset(args.mix_data, split="train")
+        general = load_dataset(args.mix_data, split="train",
+                               revision=args.mix_data_revision)
         general = general.shuffle(seed=args.seed).select(
             range(min(n_mix * 3, len(general))))
         mix_rows, rejected = [], {"no_messages": 0, "template": 0, "too_long": 0}
@@ -211,9 +214,30 @@ def main():
             if len(ids) > (args.max_seq_len or 32768):
                 rejected["too_long"] += 1
                 continue
-            # trainable span = everything (general chat is short; per-turn
-            # masking matters far less than presence of diverse formats)
-            mix_rows.append({"input_ids": ids, "labels": list(ids)})
+            # assistant-only labels via prefix diffs: token span of message
+            # i = len(template(msgs[:i+1])) - len(template(msgs[:i])). Valid
+            # only if the template is append-stable; verified per row and
+            # the row is dropped (counted) when it isn't.
+            labels = [IGNORE] * len(ids)
+            stable, prev = True, 0
+            for i, m in enumerate(msgs):
+                try:
+                    cur = len(tok.apply_chat_template(msgs[:i + 1],
+                                                      tokenize=True))
+                except Exception:
+                    stable = False
+                    break
+                if cur < prev or cur > len(ids):
+                    stable = False
+                    break
+                if m.get("role") == "assistant":
+                    for j in range(prev, cur):
+                        labels[j] = ids[j]
+                prev = cur
+            if not stable or all(l == IGNORE for l in labels):
+                rejected["template"] += 1
+                continue
+            mix_rows.append({"input_ids": ids, "labels": labels})
             if len(mix_rows) >= n_mix:
                 break
         for r in mix_rows:
@@ -328,9 +352,15 @@ def main():
         alpha=args.alpha if has_topk else 0.0,
         kd_temperature=args.temperature,
     )
+    # resume only from checkpoints that carry optimizer state; weights-only
+    # checkpoints (save_only_model) cannot resume exactly — restart clean
+    # (autoloop re-review finding 5)
     import glob as _glob
-    last_ckpt = bool(_glob.glob(os.path.join(args.out, "checkpoint-*")))
-    trainer.train(resume_from_checkpoint=last_ckpt or None)
+    ckpts = sorted(_glob.glob(os.path.join(args.out, "checkpoint-*")))
+    resumable = ckpts and any(
+        _glob.glob(os.path.join(ckpts[-1], pat))
+        for pat in ("optimizer.pt", "global_step*/", "scheduler.pt"))
+    trainer.train(resume_from_checkpoint=ckpts[-1] if resumable else None)
 
     if args.lora:
         # ZeRO-3 shards parameters across ranks; merging inside the training
