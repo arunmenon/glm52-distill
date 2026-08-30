@@ -1,51 +1,64 @@
-# Recipe sweep v1 — fix v0's IFEval format collapse while keeping transfer.
-# 12 full-data configs (no halving: rung proxies exceed the 60-row corpus,
-# and the 8-task SWE screen cannot rank — autoloop review findings 4/8).
-# Every field below is mandatory and hashed into the trial id.
-
 plan_name: mix_lr_epochs_v1
 code_requirements:
   repo: https://github.com/arunmenon/glm52-distill
-
 fixed:
-  model_path: /root/qwen35-9b            # Qwen3.5-9B materialized local dir
+  model_path: /root/qwen35-9b
   data_path: /root/store/packed/mt_qwen35_9b
   mix_data: allenai/tulu-3-sft-mixture
-  mix_data_revision: "55e9fd6"           # passed as --mix-data-revision
+  mix_data_revision: 55e9fd6
   max_seq_len: 65536
   micro_bsz: 1
   grad_accum: 8
   seed: 42
   tp: 1
   alpha: 0.0
-
 axes:
-  mix_ratio: [0.0, 0.2, 0.3]
-  lr: [5.0e-6, 1.0e-5]
-  epochs: [1, 2]
-
-# Gate (re-review finding 14): floors are RELATIVE to a same-environment
-# baseline eval of the base model (trial "baseline", eval-only, run first).
-# All completed rows are kept with a gate_reason; a gray band around each
-# floor is reported separately instead of silently vanishing.
+  mix_ratio:
+  - 0.0
+  - 0.2
+  - 0.3
+  lr:
+  - 5.0e-06
+  - 1.0e-05
+  epochs:
+  - 1
+  - 2
 gate:
-  gsm8k_strict_tolerance: 0.05           # eligible if >= base - tolerance
+  gsm8k_strict_tolerance: 0.05
   ifeval_prompt_strict_ts_tolerance: 0.05
   ifeval_inst_strict_ts_tolerance: 0.05
-  gray_band: 0.015                       # near-miss reporting width
-  required_metrics: [gsm8k_strict, gsm8k_flexible,
-                     ifeval_prompt_strict_ts, ifeval_inst_strict_ts]
+  gray_band: 0.015
+  required_metrics:
+  - gsm8k_strict
+  - gsm8k_flexible
+  - ifeval_prompt_strict_ts
+  - ifeval_inst_strict_ts
   ranking: ifeval_prompt_strict_ts
-  # SWE screen is veto/descriptive only. Finding 11 deviation, documented:
-  # 12 x 18GB finals exceed the 150GB box disk, and uploading 216GB is not
-  # viable either — finals are deleted and the top-2 are RETRAINED from
-  # their frozen trial configs for the manual SWE screen (~$1/retrain).
   retrain_top_for_screen: 2
-
+  gated_metrics_note: 'GATED: gsm8k_strict, ifeval_prompt_strict_ts, ifeval_inst_strict_ts.
+    REPORTED ONLY: gsm8k_flexible.'
+  swe_veto:
+    task_ids:
+    - conan-io__conan-13721
+    - dask__dask-7894
+    - dask__dask-8375
+    - dask__dask-8462
+    - iterative__dvc-3794
+    - iterative__dvc-4309
+    - python__mypy-10174
+    - pandas-dev__pandas-50714
+    rollouts_per_task: 1
+    pass_rule: candidate PASSES the veto iff >=6/8 rollouts run >=10 steps without
+      a driver abort (RepeatedFormat or API error) AND >=1/8 rollouts submits a patch.
+      Pre-registered before any sweep result is seen; v0 would fail this rule (3/7
+      aborted at step 3, 0 submissions).
 budget:
-  reserve_usd: 3.00           # never dip below this account credit
-  hard_sweep_cap_usd: 40.00   # billed-since-manifest ceiling, all attempts
-  per_trial_cap_usd: 3.50     # enforced via deadline = cap / live dph
-  trial_wall_cap_s: 14400     # absolute ceiling even if dph is tiny
+  reserve_usd: 3.0
+  hard_sweep_cap_usd: 35.0
+  per_trial_cap_usd: 3.5
+  trial_wall_cap_s: 14400
   attempt_cap: 2
   min_free_disk_gb: 60
+corpus_note: "Training data = the FIXED train split of packed/mt_qwen35_9b capped\
+  \ at 64k tokens (expected ~44 rows), 10-row validation split held out \u2014 identical\
+  \ to v0 for comparability. NOT all 60 rollouts."

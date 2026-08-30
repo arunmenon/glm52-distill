@@ -518,6 +518,22 @@ def guard_money(plan, box, spend: Spend):
                  f"< ${b['reserve_usd']:.2f}")
 
 
+
+def sync_state(run_dir: Path):
+    """Durability (phase-1 review item 6): push sweep state to the HF store
+    after every terminal attempt. Non-fatal — a sync failure never blocks
+    the sweep, but it is printed so silence means synced."""
+    store = os.environ.get("PILOT_STORE", "ledzepu2/glm52-pilot-artifacts")
+    r = subprocess.run(
+        ["hf", "upload", store, str(run_dir),
+         f"sweep_state/{run_dir.name}", "--type", "dataset",
+         "--include", "*.json", "--commit-message",
+         "sweep state sync", "--format", "quiet"],
+        capture_output=True, text=True, timeout=300)
+    if r.returncode != 0:
+        print(f"WARN state sync failed: {r.stderr[-150:]}")
+
+
 class Sweep:
     def __init__(self, plan, box, run_dir, manifest, ns_dir):
         self.plan = plan
@@ -588,6 +604,7 @@ class Sweep:
                     "config": trial["config"],
                     "attempts": a.get("attempts", 0),
                     "attempt_uuid": auid, "result": res, "adopted": True})
+                sync_state(self.run_dir)
                 return "success"
         # a locally-running attempt: resume polling it rather than relaunch
         if state == "running" and a.get("attempt_uuid"):
@@ -709,6 +726,7 @@ class Sweep:
                 atomic_write(attempt_path(self.run_dir, tid), {
                     **a, "state": "success" if ok else "failed",
                     "result": res, "finished": time.time()})
+                sync_state(self.run_dir)
                 return "success" if ok else "failed"
             try:
                 hb = self.box.ssh_ok(
@@ -747,6 +765,16 @@ class Sweep:
         for tid in ls.split():
             if tid not in keep_ids:
                 self.box.ssh(f"rm -rf {self.ns}/finals/{tid}")
+        # recoverability: push current finalists to the store from the box
+        # (background, idempotent; box has .env.hf + fast pipe)
+        for tid in keep_ids:
+            self.box.ssh(
+                f"[ -d {self.ns}/finals/{tid} ] && "
+                f"nohup bash -c 'source /root/exp_env 2>/dev/null; "
+                f"source /root/.sweep_env; "
+                f"hf upload ledzepu2/glm52-pilot-artifacts "
+                f"{self.ns}/finals/{tid} sweep_finals/{tid} "
+                f"--type dataset --format quiet' >/dev/null 2>&1 & true")
 
 
 def gate_and_rank(plan, manifest, run_dir, allow_partial=False):
@@ -791,6 +819,10 @@ def main():
     ap.add_argument("--instance", type=int)
     ap.add_argument("--keep-instance", action="store_true",
                     help="do NOT stop the instance when the sweep exits")
+    ap.add_argument("--max-new-trials", type=int, default=0,
+                    help="shakedown pause: launch at most N NEW trials this "
+                         "invocation, then exit cleanly (same manifest "
+                         "resumes later); 0 = unlimited")
     ap.add_argument("cmd", choices=["run", "report", "plan", "coords"])
     args = ap.parse_args()
 
@@ -911,6 +943,7 @@ def main():
                          {**a, "base_key": sha12(base_cfg)})
 
         wave = 0
+        new_launched = 0
         while True:
             wave += 1
             halt_check(note=f"wave {wave}")
