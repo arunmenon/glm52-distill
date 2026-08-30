@@ -25,10 +25,13 @@ IID="${1:?usage: 08_sweep_smoke.sh <iid> <box_ip> <box_port>}"
 BOX_IP="${2:?box ip}"; BOX_PORT="${3:?box port}"
 cd "$(dirname "$0")"
 
-MOCK_PORT=8642
-MOCK_STATE=$(mktemp /tmp/mockvast.XXXXXX.json)
+MOCK_PORT=$((20000 + RANDOM % 20000))
 export SWEEP_ROOT="$(mktemp -d)/root"
 mkdir -p "$SWEEP_ROOT"
+MOCK_STATE="$SWEEP_ROOT/mockvast_state.json"
+# refuse to run over a live prior invocation
+pgrep -f "mock_vast[.]py" >/dev/null && { echo "another smoke run is live; abort"; exit 2; }
+pgrep -f "08_sweep[.]py .*run" >/dev/null && { echo "a conductor is live; abort"; exit 2; }
 export VAST_API_BASE="http://127.0.0.1:${MOCK_PORT}"
 export VAST_API_KEY="${VAST_API_KEY:-mock}"
 export HF_TOKEN="${HF_TOKEN:-hf_mock}"
