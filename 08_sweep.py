@@ -1027,19 +1027,30 @@ def main():
                       f"attempt {a.get('attempt_uuid')}")
                 sweep.poll(t, a["attempt_uuid"], a.get("deadline_s", 14400))
                 sweep.prune_finals()
+            paused = False
             for t in pending:
+                if (args.max_new_trials
+                        and new_launched >= args.max_new_trials):
+                    print(f"shakedown pause: {new_launched} new trials "
+                          f"launched this run (--max-new-trials "
+                          f"{args.max_new_trials}); rerun to continue")
+                    paused = True
+                    break
                 cfg = t["config"]
                 print(f"  {t['trial_id']} mix={cfg['mix_ratio']} "
                       f"lr={cfg['lr']} ep={cfg['epochs']}")
                 tpl = (FAKE_TRIAL_SCRIPT
                        if plan["fixed"].get("fake_workload")
                        else TRIAL_SCRIPT)
+                new_launched += 1
                 st = sweep.launch(t, tpl, extra=(
                     {"fake_sleep": plan["fixed"].get("fake_sleep_s", 60)}
                     if plan["fixed"].get("fake_workload") else None))
                 print("   ->", st)
                 if st == "success":
                     sweep.prune_finals()
+            if paused:
+                break
 
         report = gate_and_rank(plan, manifest, run_dir)
         atomic_write(run_dir / "sweep_report.json", report)
