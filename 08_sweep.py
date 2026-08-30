@@ -847,6 +847,10 @@ def main():
     ap.add_argument("--instance", type=int)
     ap.add_argument("--keep-instance", action="store_true",
                     help="do NOT stop the instance when the sweep exits")
+    ap.add_argument("--accept-code-drift", action="store_true",
+                    help="conductor hotfix: run despite HEAD differing from "
+                         "manifest code_rev; trials still execute at the "
+                         "pinned rev on the box, drift is logged")
     ap.add_argument("--max-new-trials", type=int, default=0,
                     help="shakedown pause: launch at most N NEW trials this "
                          "invocation, then exit cleanly (same manifest "
@@ -911,6 +915,17 @@ def main():
         for k, v in (("code_rev", code_rev), ("data_digest", data_digest),
                      ("model_digest", model_digest)):
             if manifest[k] != v:
+                if k == "code_rev" and args.accept_code_drift:
+                    # conductor-side hotfix: trial scripts keep verifying
+                    # the PINNED rev on the box, so trial content is
+                    # unchanged; record the drift for the audit trail.
+                    with (run_dir / "code_drift.jsonl").open("a") as fh:
+                        fh.write(json.dumps({
+                            "pinned": manifest[k], "conductor": v,
+                            "time": time.time()}) + "\n")
+                    print(f"code drift accepted: pinned {manifest[k][:12]}"
+                          f", conductor at {v[:12]} (logged)")
+                    continue
                 sys.exit(f"{k} changed under existing manifest "
                          f"({manifest[k]} -> {v}); start a new sweep")
         if manifest["plan"] != plan:
