@@ -85,11 +85,11 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
+    global STATE
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8642)
     ap.add_argument("--state", default=str(STATE))
     args = ap.parse_args()
-    global STATE
     STATE = Path(args.state)
     if not STATE.exists():
         save({"credit": 50.0, "dph_total": 0.80,
