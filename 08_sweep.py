@@ -166,10 +166,14 @@ class Box:
         return self.dph
 
     def ssh(self, cmd: str, timeout: int = 120, input_text: str = None):
-        return subprocess.run(
-            ["ssh", *SSH_OPTS, "-p", str(self.port), f"root@{self.ip}", cmd],
-            capture_output=True, text=True, timeout=timeout,
-            input=input_text)
+        try:
+            return subprocess.run(
+                ["ssh", *SSH_OPTS, "-p", str(self.port),
+                 f"root@{self.ip}", cmd],
+                capture_output=True, text=True, timeout=timeout,
+                input=input_text)
+        except subprocess.TimeoutExpired:
+            raise Indeterminate(f"ssh timeout after {timeout}s: {cmd[:60]}")
 
     def ssh_ok(self, cmd: str, timeout: int = 120,
                input_text: str = None) -> str:
@@ -186,10 +190,13 @@ class Box:
         return None if "__ABSENT__" in out else out
 
     def scp_to(self, local: Path, remote: str):
-        r = subprocess.run(["scp", *SSH_OPTS, "-P", str(self.port),
-                            str(local), f"root@{self.ip}:{remote}"],
-                           capture_output=True, text=True,
-                           timeout=SCP_TIMEOUT_S)
+        try:
+            r = subprocess.run(["scp", *SSH_OPTS, "-P", str(self.port),
+                                str(local), f"root@{self.ip}:{remote}"],
+                               capture_output=True, text=True,
+                               timeout=SCP_TIMEOUT_S)
+        except subprocess.TimeoutExpired:
+            raise Indeterminate(f"scp timeout after {SCP_TIMEOUT_S}s")
         if r.returncode != 0:
             raise Indeterminate(f"scp_to failed: {r.stderr[-200:]}")
 
@@ -567,14 +574,20 @@ class Sweep:
         pg = self.remote_pgid(tid, auid)
         if not pg:
             return False
-        r = self.box.ssh(f"kill -0 -- -{pg} 2>/dev/null && echo LIVE || "
-                         f"echo DEAD")
+        try:
+            r = self.box.ssh(f"kill -0 -- -{pg} 2>/dev/null && echo LIVE || "
+                             f"echo DEAD")
+        except Indeterminate:
+            return True
         return "LIVE" in r.stdout
 
     def kill_attempt(self, tid, auid):
         pg = self.remote_pgid(tid, auid)
         if pg:
-            self.box.ssh(f"kill -- -{pg} 2>/dev/null; true")
+            try:
+                self.box.ssh(f"kill -- -{pg} 2>/dev/null; true")
+            except Indeterminate:
+                pass
 
     def fetch_result(self, tid, auid) -> dict | None:
         out = self.box.read_remote(
@@ -587,7 +600,10 @@ class Sweep:
             return None
 
     def renew_lease(self):
-        self.box.ssh(f"mkdir -p {self.ns} && touch {self.ns}/lease")
+        try:
+            self.box.ssh(f"mkdir -p {self.ns} && touch {self.ns}/lease")
+        except Indeterminate:
+            pass
 
     # ---- reconcile (r3 b2): runs for EVERY trial before pending calc ----
     def reconcile_trial(self, trial) -> str:
@@ -770,19 +786,23 @@ class Sweep:
             ls = self.box.ssh_ok(f"ls {self.ns}/finals 2>/dev/null || true")
         except Indeterminate:
             return
-        for tid in ls.split():
-            if tid not in keep_ids:
-                self.box.ssh(f"rm -rf {self.ns}/finals/{tid}")
-        # recoverability: push current finalists to the store from the box
-        # (background, idempotent; box has .env.hf + fast pipe)
-        for tid in keep_ids:
-            self.box.ssh(
-                f"[ -d {self.ns}/finals/{tid} ] && "
-                f"nohup bash -c 'source /root/exp_env 2>/dev/null; "
-                f"source /root/.sweep_env; "
-                f"hf upload ledzepu2/glm52-pilot-artifacts "
-                f"{self.ns}/finals/{tid} sweep_finals/{tid} "
-                f"--type dataset --format quiet' >/dev/null 2>&1 & true")
+        try:
+            for tid in ls.split():
+                if tid not in keep_ids:
+                    self.box.ssh(f"rm -rf {self.ns}/finals/{tid}")
+            # recoverability: push current finalists to the store from the
+            # box (background, idempotent; box has .env.hf + fast pipe)
+            for tid in keep_ids:
+                self.box.ssh(
+                    f"[ -d {self.ns}/finals/{tid} ] && "
+                    f"nohup bash -c 'source /root/exp_env 2>/dev/null; "
+                    f"source /root/.sweep_env; "
+                    f"hf upload ledzepu2/glm52-pilot-artifacts "
+                    f"{self.ns}/finals/{tid} sweep_finals/{tid} "
+                    f"--type dataset --format quiet' "
+                    f">/dev/null 2>&1 </dev/null & true", timeout=30)
+        except Indeterminate:
+            return
 
 
 def gate_and_rank(plan, manifest, run_dir, allow_partial=False):
