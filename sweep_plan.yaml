@@ -1,0 +1,43 @@
+# Recipe sweep v1 — fix v0's IFEval format collapse while keeping transfer.
+# 12 full-data configs (no halving: rung proxies exceed the 60-row corpus,
+# and the 8-task SWE screen cannot rank — autoloop review findings 4/8).
+# Every field below is mandatory and hashed into the trial id (finding 1/6).
+
+plan_name: mix_lr_epochs_v1
+code_requirements:
+  # conductor refuses to run if the box's repo is not at this commit
+  repo: https://github.com/arunmenon/glm52-distill
+
+fixed:
+  model_path: /root/qwen35-9b            # Qwen3.5-9B materialized local dir
+  data_path: /root/store/packed/mt_qwen35_9b
+  mix_data: allenai/tulu-3-sft-mixture
+  mix_data_revision: "55e9fd6"           # pin; conductor passes --revision
+  max_seq_len: 65536
+  micro_bsz: 1
+  grad_accum: 8
+  seed: 42
+  tp: 1
+  alpha: 0.0
+
+axes:
+  mix_ratio: [0.0, 0.2, 0.3]
+  lr: [5.0e-6, 1.0e-5]
+  epochs: [1, 2]
+
+# Two-stage gate (finding 7/8): floors are hard eligibility, not score terms.
+gate:
+  eligibility:
+    ifeval_prompt_strict_ts_min: 0.45    # v0 scored 0.359; base 0.497
+    gsm8k_strict_min: 0.74               # base 0.789, tolerance ~5pts
+    required_metrics: [gsm8k_strict, gsm8k_flexible,
+                       ifeval_prompt_strict_ts, ifeval_inst_strict_ts]
+  ranking: ifeval_prompt_strict_ts       # recovery among eligible trials
+  # SWE screen is veto/descriptive only, run manually on the top 2.
+
+budget:
+  reserve_usd: 3.00          # never dip below this account credit
+  per_trial_cap_usd: 3.50    # wall-clock * dph, pessimistic
+  trial_wall_cap_s: 14400    # 4h hard kill
+  attempt_cap: 2
+  min_free_disk_gb: 60
