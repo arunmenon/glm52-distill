@@ -60,7 +60,7 @@ cleanup() {
   kill "$MOCK_PID" 2>/dev/null || true
   $SSH "for P in /root/sweep_ns/*/trials/*/*/pgid; do
           [ -f \"\$P\" ] && kill -- -\$(cut -d' ' -f1 \"\$P\") 2>/dev/null
-        done; pkill -f 'sweep_ns/.*watchdog.sh' 2>/dev/null; true" \
+        done; pkill -f 'sweep_ns/.*watchdog[.]sh' 2>/dev/null; true" \
     >/dev/null 2>&1 || true
   rm -f "$MOCK_STATE" sweep_smoke_plan.yaml sweep_smoke2_plan.yaml
 }

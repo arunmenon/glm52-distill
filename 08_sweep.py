@@ -911,7 +911,7 @@ def main():
     wd_local.write_text(WATCHDOG_SCRIPT.format(ns_dir=ns_dir, iid=box.iid,
                                                lease_ttl=LEASE_TTL_S))
     box.scp_to(wd_local, f"{ns_dir}/watchdog.sh")
-    box.ssh_ok(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog.sh' "
+    box.ssh_ok(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog[.]sh' "
                f"2>/dev/null; setsid bash {ns_dir}/watchdog.sh "
                f">/dev/null 2>&1 < /dev/null & echo WD")
 
@@ -984,7 +984,7 @@ def main():
         print(json.dumps(report, indent=1)[:3000])
     finally:
         try:
-            box.ssh(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog.sh' "
+            box.ssh(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog[.]sh' "
                     f"2>/dev/null; true", timeout=30)
         except Exception:
             pass
