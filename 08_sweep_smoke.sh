@@ -65,7 +65,7 @@ cleanup() {
           [ -f \"\$P\" ] && kill -- -\$(cut -d' ' -f1 \"\$P\") 2>/dev/null
         done; pkill -f 'sweep_ns/.*watchdog[.]sh' 2>/dev/null; true" \
     >/dev/null 2>&1 || true
-  rm -f "$MOCK_STATE" sweep_smoke_plan.yaml sweep_smoke2_plan.yaml
+  rm -f "$MOCK_STATE" sweep_smoke_plan.yaml sweep_smoke2_plan.yaml sweep_smoke3_plan.yaml
 }
 trap cleanup EXIT
 
@@ -92,14 +92,21 @@ p["budget"].update({"trial_wall_cap_s": 240, "per_trial_cap_usd": 0.30,
                     "hard_sweep_cap_usd": 2.0})
 yaml.safe_dump(p, open("sweep_smoke_plan.yaml", "w"), sort_keys=False)
 PY
-RUNDIR() { ls -d "$SWEEP_ROOT"/*/ 2>/dev/null | head -1; }
+rundir_for() {  # rundir_for <plan_file> -> exact run dir for that plan
+  python3 - "$1" <<'PY'
+import hashlib, json, sys, yaml, os
+plan = yaml.safe_load(open(sys.argv[1]))
+d = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()[:12]
+print(os.environ["SWEEP_ROOT"] + "/" + d + "/")
+PY
+}
 
 echo "== S1: provisioning + happy path through the mock =="
 run_to 900 python3 08_sweep.py --plan sweep_smoke_plan.yaml \
   --instance "$IID" --keep-instance run > "$SWEEP_ROOT/s1.log" 2>&1
 RC=$?
 check "S1 conductor exits 0" "[ $RC -eq 0 ]"
-RD=$(RUNDIR)
+RD=$(rundir_for sweep_smoke_plan.yaml)
 check "S1 baseline success recorded" \
   "python3 -c \"import json;d=json.load(open('${RD}attempt_baseline.json'));exit(0 if d['state']=='success' else 1)\""
 TID=$(python3 -c "import json,glob;f=[x for x in glob.glob('${RD}attempt_*.json') if 'baseline' not in x][0];print(json.load(open(f))['trial_id'])")
@@ -137,9 +144,10 @@ python3 08_sweep.py --plan sweep_smoke2_plan.yaml --instance "$IID" \
 CPID=$!
 RD2=""
 for i in $(seq 1 40); do
-  RD2=$(ls -d "$SWEEP_ROOT"/*/ 2>/dev/null | while read d; do
-    grep -l '"state": "running"' "$d"attempt_*.json 2>/dev/null | head -1 | xargs -r dirname; done | head -1)
-  [ -n "$RD2" ] && break; sleep 5
+  RD2=$(rundir_for sweep_smoke2_plan.yaml)
+  RUNNING=$(grep -l '"state": "running"' "$RD2"attempt_*.json 2>/dev/null | grep -v baseline | head -1)
+  [ -n "$RUNNING" ] && break
+  RD2=""; sleep 5
 done
 check "S2 an attempt reached running" "[ -n \"$RD2\" ]"
 kill -9 "$CPID" 2>/dev/null; sleep 2
@@ -155,14 +163,20 @@ check "S2 adoption or success recorded locally" \
   "grep -rl '\"state\": \"success\"' \"$RD2\"/attempt_*.json 2>/dev/null | grep -q . || grep -rl '\"adopted\": true' \"$RD2\"/attempt_*.json 2>/dev/null | grep -q ."
 
 echo "== S3: preloaded spend trips the sweep cap before any launch =="
-RD=$(RUNDIR)
-python3 -c "import json;json.dump({'usd': 1.95, 'at': 0}, open('${RD}spend.json','w'))"
-OUT=$(run_to 120 python3 08_sweep.py --plan sweep_smoke_plan.yaml \
+python3 - <<'PY'
+import yaml
+p = yaml.safe_load(open("sweep_smoke_plan.yaml"))
+p["plan_name"] = "smoke_r3_s3"
+yaml.safe_dump(p, open("sweep_smoke3_plan.yaml", "w"), sort_keys=False)
+PY
+RD3=$(rundir_for sweep_smoke3_plan.yaml)
+mkdir -p "$RD3"
+python3 -c "import json;json.dump({'usd': 1.95, 'at': 0}, open('${RD3}spend.json','w'))"
+OUT=$(run_to 120 python3 08_sweep.py --plan sweep_smoke3_plan.yaml \
   --instance "$IID" --keep-instance run 2>&1); RC=$?
 check "S3 nonzero exit on cap" "[ $RC -ne 0 ]"
 echo "$OUT" | grep -q "SWEEP CAP" && check "S3 cap message explicit" true \
   || check "S3 cap message explicit" false
-python3 -c "import json;json.dump({'usd': 0.0, 'at': 0}, open('${RD}spend.json','w'))"
 
 echo "== S4: 200-with-error billing body fails closed =="
 python3 - <<PY
@@ -182,7 +196,7 @@ json.dump(d, open("$MOCK_STATE", "w"))
 PY
 
 echo "== S5: baseline identity mismatch aborts =="
-RD=$(RUNDIR)
+RD=$(rundir_for sweep_smoke_plan.yaml)
 python3 - <<PY
 import json
 p = "${RD}attempt_baseline.json"
@@ -196,28 +210,24 @@ echo "$OUT" | grep -q "different .*identity\|different model" \
   && check "S5 explicit mismatch message" true \
   || check "S5 explicit mismatch message" false
 
-echo "== S6: stale lease -> watchdog kills trials and stops the box =="
+echo "== S6: stale lease -> watchdog kills planted group within a tick =="
 NS=$($SSH 'ls -d /root/sweep_ns/*/ 2>/dev/null | head -1' | tr -d '[:space:]')
 if [ -n "$NS" ]; then
-  python3 - <<PY
-import json
-d = json.load(open("$MOCK_STATE")); d["stops"] = []
-json.dump(d, open("$MOCK_STATE", "w"))
-PY
-  # watchdog on the box can't reach our laptop mock; simulate its stop call
-  # path by running its kill logic and verifying the curl target directly:
-  # (a) make lease stale, (b) run one watchdog iteration inline
+  $SSH "mkdir -p ${NS}trials/s6test/deadbeef && touch ${NS}lease && setsid bash -c 'echo \$(ps -o pgid= -p \$\$ | tr -dc 0-9) deadbeef > ${NS}trials/s6test/deadbeef/pgid; sleep 600' >/dev/null 2>&1 < /dev/null & echo PLANTED" >/dev/null 2>&1
+  sleep 3
+  $SSH "setsid bash ${NS}watchdog.sh >/dev/null 2>&1 < /dev/null & echo WD" >/dev/null 2>&1
   $SSH "touch -d '30 minutes ago' ${NS}lease 2>/dev/null || touch -t 202601010000 ${NS}lease" >/dev/null 2>&1
-  WD_KILLED=$($SSH "bash -c '
-    for P in ${NS}trials/*/*/pgid; do
-      [ -f \"\$P\" ] || continue
-      PG=\$(cut -d\" \" -f1 \"\$P\" | tr -dc 0-9)
-      [ -n \"\$PG\" ] && kill -0 -- -\$PG 2>/dev/null && echo LIVEGROUP
-    done; echo SWEEP_DONE'" )
-  check "S6 no live trial groups after expiry window" \
-    "! echo \"$WD_KILLED\" | grep -q LIVEGROUP"
-  check "S6 watchdog script present and armed on box" \
-    "$SSH 'test -f ${NS}watchdog.sh' >/dev/null 2>&1"
+  echo "  waiting one watchdog tick (75s) ..."
+  sleep 75
+  PG=$($SSH "cut -d' ' -f1 ${NS}trials/s6test/deadbeef/pgid 2>/dev/null" | tr -dc 0-9)
+  if [ -n "$PG" ]; then
+    check "S6 planted group killed by watchdog" \
+      "! \$SSH 'kill -0 -- -$PG 2>/dev/null && echo LIVE' | grep -q LIVE"
+  else
+    check "S6 planted group registered" false
+  fi
+  check "S6 stop attempted (watchdog log shows action)" \
+    "$SSH 'grep -q \"lease stale\" ${NS}watchdog.log 2>/dev/null' >/dev/null 2>&1"
 else
   check "S6 namespace existed on box" false
 fi

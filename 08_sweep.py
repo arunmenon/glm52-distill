@@ -930,6 +930,15 @@ def main():
                      "model/code/eval identity; new sweep dir required")
         if prev_base.get("state") != "success":
             halt_check(note="pre-baseline")
+            # baseline gets the same crash recovery as trials: adopt a
+            # finished remote result, kill any stale group (smoke S2 gap)
+            if prev_base.get("attempt_uuid"):
+                sweep.kill_attempt(base_id, prev_base["attempt_uuid"])
+            st = sweep.reconcile_trial({"trial_id": base_id,
+                                        "config": base_cfg})
+            if st == "success":
+                prev_base = read_attempt(run_dir, base_id)
+        if prev_base.get("state") != "success":
             print("running same-environment baseline eval ...")
             st = sweep.launch(
                 {"trial_id": base_id, "config": base_cfg},
