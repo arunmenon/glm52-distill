@@ -645,3 +645,26 @@ assisted + 8 legacy independent), student dataset 58 rows @ 80k
 (48 train/10 val), DPO 26 pairs, 60 KD shards. student_v0 + checkpoints
 uploaded. PENDING on ~$10 top-up: anchor rerun, SWE screen, terminal-bench
 before/after — the transfer verdict that sizes RUN.
+
+## 2026-08-30 — Transfer verdict: v0 SFT is net-negative for agentic use
+
+**SWE screen final** (8 held-out val tasks, 1 rollout each, identical
+serve/limits both legs):
+
+| leg  | verified | submitted | profile |
+|------|----------|-----------|---------|
+| base | 0/7      | 0         | wanders full 50 steps; rarely tests; never converges |
+| v0   | 0/7      | 0         | **4/7 die at step 3 (RepeatedFormat)**; the other 3 split: 2 deep debugging efforts w/ 9-10 test-suite runs (teacher's habit, transferred) that time out unconverged, 1 wander |
+
+**Verdict**: format collapse is not just an IFEval tax — it structurally
+breaks the agent loop. v0 emits malformed tool-calls repeatedly and the
+driver aborts in the majority of tasks. Where the format holds, behavioral
+transfer is visible (heavy verify-by-testing). Anchors: GSM8K held (77.6 vs
+78.9), IFEval-ts down ~12.
+
+**Decision consequences**: (1) do NOT scale generation yet — the corpus is
+fine, the recipe is the broken part (task #6 RUN sizing deferred until a
+recipe passes the gate); (2) the sweep's mix/lr/epochs grid is precisely
+targeted at the observed failure; (3) KD-alpha promotes from enhancement to
+likely-primary once aligned shards exist. Screen runs synced to HF
+(expansion/screen). Eval-phase spend: ~$6 of the $15 top-up.
