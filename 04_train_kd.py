@@ -196,10 +196,12 @@ def main():
         if has_topk_probe := ("topk_ids" in ds["train"].column_names):
             sys.exit("--mix-data unsupported on top-K KD packs: mix rows "
                      "would carry None topk arrays into the collator")
+        # streaming: the pinned Tulu mixture is ~7.2GB / 939k rows on
+        # disk if materialized; we need a few dozen rows (r3 f10)
         general = load_dataset(args.mix_data, split="train",
-                               revision=args.mix_data_revision)
-        general = general.shuffle(seed=args.seed).select(
-            range(min(n_mix * 3, len(general))))
+                               revision=args.mix_data_revision,
+                               streaming=True)
+        general = general.shuffle(seed=args.seed, buffer_size=10000)
         # Label construction reuses 03c's segment renderer — the same
         # production path that masks the trajectory corpus (assistant turns
         # trainable, everything else IGNORE). The earlier prefix-diff
