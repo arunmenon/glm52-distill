@@ -200,53 +200,41 @@ def main():
                                revision=args.mix_data_revision)
         general = general.shuffle(seed=args.seed).select(
             range(min(n_mix * 3, len(general))))
-        mix_rows, rejected = [], {"no_messages": 0, "template": 0, "too_long": 0}
+        # Label construction reuses 03c's segment renderer — the same
+        # production path that masks the trajectory corpus (assistant turns
+        # trainable, everything else IGNORE). The earlier prefix-diff
+        # approach corrupted spans: Qwen3.5's template rewrites historical
+        # assistant turns, so prefix lengths are not stable (review r3 b3).
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "mt", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "03c_build_multiturn_dataset.py"))
+        _mt = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mt)
+
+        mix_rows, rejected = [], {"no_messages": 0, "render": 0,
+                                  "too_long": 0, "no_trainable": 0}
         for ex in general:
             msgs = ex.get("messages") or ex.get("conversations")
             if not msgs:
                 rejected["no_messages"] += 1
                 continue
             try:
-                ids = tok.apply_chat_template(msgs, tokenize=True)
+                segments = _mt.render_qwen3_segments(list(msgs))
+                ids, labels = _mt.tokenize_with_mask(
+                    tok, segments, args.max_seq_len or 32768)
             except Exception:
-                rejected["template"] += 1
+                rejected["render"] += 1
                 continue
-            if len(ids) > (args.max_seq_len or 32768):
+            if ids is None:
                 rejected["too_long"] += 1
                 continue
-            # assistant-only labels via prefix diffs: token span of message
-            # i = len(template(msgs[:i+1])) - len(template(msgs[:i])). Valid
-            # only if the template is append-stable; verified per row and
-            # the row is dropped (counted) when it isn't.
-            labels = [IGNORE] * len(ids)
-            stable, prev = True, 0
-            for i, m in enumerate(msgs):
-                try:
-                    cur = len(tok.apply_chat_template(msgs[:i + 1],
-                                                      tokenize=True))
-                except Exception:
-                    stable = False
-                    break
-                if cur < prev or cur > len(ids):
-                    stable = False
-                    break
-                if m.get("role") == "assistant":
-                    for j in range(prev, cur):
-                        labels[j] = ids[j]
-                prev = cur
-            if not stable or all(l == IGNORE for l in labels):
-                rejected["template"] += 1
+            if all(l == IGNORE for l in labels):
+                rejected["no_trainable"] += 1
                 continue
-            mix_rows.append({"input_ids": ids, "labels": labels})
+            mix_rows.append({"input_ids": list(ids), "labels": list(labels)})
             if len(mix_rows) >= n_mix:
                 break
-        for r in mix_rows:
-            for col in ds["train"].column_names:
-                if col not in r:
-                    r[col] = None
-        ds["train"] = concatenate_datasets(
-            [ds["train"], Dataset.from_list(mix_rows)]).shuffle(
-                seed=args.seed)
         if len(mix_rows) < n_mix:
             sys.exit(f"mix-data underfilled: {len(mix_rows)}/{n_mix} "
                      f"usable rows (rejected: {rejected})")
@@ -356,11 +344,15 @@ def main():
     # checkpoints (save_only_model) cannot resume exactly — restart clean
     # (autoloop re-review finding 5)
     import glob as _glob
-    ckpts = sorted(_glob.glob(os.path.join(args.out, "checkpoint-*")))
-    resumable = ckpts and any(
-        _glob.glob(os.path.join(ckpts[-1], pat))
-        for pat in ("optimizer.pt", "global_step*/", "scheduler.pt"))
-    trainer.train(resume_from_checkpoint=ckpts[-1] if resumable else None)
+    ckpts = sorted(_glob.glob(os.path.join(args.out, "checkpoint-*")),
+                   key=lambda c: int(c.rsplit("-", 1)[-1]))
+    last = ckpts[-1] if ckpts else None
+    resumable = last and (
+        _glob.glob(os.path.join(last, "global_step*"))
+        or (os.path.exists(os.path.join(last, "optimizer.pt"))
+            and os.path.exists(os.path.join(last, "scheduler.pt"))
+            and _glob.glob(os.path.join(last, "rng_state*.pth"))))
+    trainer.train(resume_from_checkpoint=last if resumable else None)
 
     if args.lora:
         # ZeRO-3 shards parameters across ranks; merging inside the training
