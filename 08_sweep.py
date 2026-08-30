@@ -911,8 +911,11 @@ def main():
     wd_local.write_text(WATCHDOG_SCRIPT.format(ns_dir=ns_dir, iid=box.iid,
                                                lease_ttl=LEASE_TTL_S))
     box.scp_to(wd_local, f"{ns_dir}/watchdog.sh")
-    box.ssh_ok(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog[.]sh' "
-               f"2>/dev/null; setsid bash {ns_dir}/watchdog.sh "
+    # two calls: the kill pattern and the launch PATH must never share an
+    # argv, or pkill matches the path and kills its own shell (reproduced)
+    box.ssh(f"pkill -f 'sweep_ns/{plan_digest[:8]}/watchdog[.]sh' "
+            f"2>/dev/null; true")
+    box.ssh_ok(f"setsid bash {ns_dir}/watchdog.sh "
                f">/dev/null 2>&1 < /dev/null & echo WD")
 
     try:
