@@ -714,3 +714,19 @@ tool_calls. The poisoned run is quarantined
 (veto_a9c55f0c.hermes-mismatch.log), not counted. Real run relaunched.
 Lesson recorded: serving-side parser choice is part of the eval identity
 for agentic screens — pin it alongside eval_settings in future plans.
+
+## 2026-08-31 — Both finalists PASS the SWE veto; campaign 1 verdict ready
+
+a9c55f0c (pure, 5e-6, 1ep): 8/8 clean, 1 submission (real 633B patch
+authored and test-verified in-container; capture empty because the agent
+echoed the submit marker without appending the diff — adjudicated PASS on
+transcript evidence).
+d62fa0fc (20% mix, 5e-6, 1ep): 8/8 clean, 2 submissions captured
+end-to-end (conan 633B @ step 35, pandas 506B @ step 48). PASS.
+Zero format aborts in ~790 combined steps vs v0's step-3 collapse: the
+1-epoch gentle-lr recipe fully restores protocol stability. Residual gap
+is convergence (most rollouts spend all 50 steps exploring) — the
+pre-identified DPO target. IFEval ranking gap between finalists (0.481
+vs 0.471) is inside the plan's 0.015 gray band = statistical tie; veto
+board discriminates in favor of d62fa0fc. Veto artifacts mirrored to the
+store (sweep_veto/). Awaiting human winner acceptance.
