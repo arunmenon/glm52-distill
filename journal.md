@@ -684,3 +684,18 @@ conductor HEAD instead of pinned rev. Four commits: 7c204a9, f15c589,
 c8e098a, 9566ea4. Conductor resumed, adopted trial 1, launched trial 2
 (d62fa0fc, 20% mix). Box never idled past the lease window; watchdog
 money-guard never needed to fire.
+
+## 2026-08-31 — Campaign 1 truncated by human decision at 9/12 arms
+
+Trials 1-8 sealed; scoreboard 3 pass / 5 fail with a converged causal story:
+collapse tracks total optimization pressure (lr x epochs). 2x lr fails at
+1ep (0.379/0.394/0.383); the second epoch alone fails at gentle lr (0.405
+pure, 0.412 with 20% mix); instruction mix never changed a verdict in six
+arms. User decision: skip trials 10-12 (2x lr x 2ep corner, every
+ingredient already independently fatal) and advance to the veto phase.
+Conductor restarted with launch cap -1: adopts trial 9, seals it, writes
+the final gate_and_rank report over 9 arms, stops. Skipped arms remain
+pending in the frozen manifest, documented here as skipped-for-time, not
+skipped-for-results. Next: SWE veto on top-2 (trial 1 a9c55f0c pure/5e-6/
+1ep, trial 2 d62fa0fc 20%mix/5e-6/1ep) per the pre-registered 8-task rule
+frozen in sweep_plan.yaml before any result existed.
