@@ -699,3 +699,18 @@ pending in the frozen manifest, documented here as skipped-for-time, not
 skipped-for-results. Next: SWE veto on top-2 (trial 1 a9c55f0c pure/5e-6/
 1ep, trial 2 d62fa0fc 20%mix/5e-6/1ep) per the pre-registered 8-task rule
 frozen in sweep_plan.yaml before any result existed.
+
+## 2026-08-31 — Veto instrument bug caught and fixed before it lied
+
+First veto run for a9c55f0c returned 8/8 RepeatedFormatError at exactly
+step 3 in 7-10s each — a perfect mimicry of v0's collapse signature. The
+uniformity and impossible speed flagged it as instrumental. Direct probe
+proved the student emits well-formed XML tool calls
+(<function=bash><parameter=command>...), the format of its training
+corpus; the vLLM server's hermes parser expects JSON-style calls and
+parsed nothing, so the harness saw "no tool call" thrice and aborted.
+Fix: --tool-call-parser qwen3_coder; probe now returns structured
+tool_calls. The poisoned run is quarantined
+(veto_a9c55f0c.hermes-mismatch.log), not counted. Real run relaunched.
+Lesson recorded: serving-side parser choice is part of the eval identity
+for agentic screens — pin it alongside eval_settings in future plans.
