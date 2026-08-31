@@ -730,3 +730,19 @@ pre-identified DPO target. IFEval ranking gap between finalists (0.481
 vs 0.471) is inside the plan's 0.015 gray band = statistical tie; veto
 board discriminates in favor of d62fa0fc. Veto artifacts mirrored to the
 store (sweep_veto/). Awaiting human winner acceptance.
+
+## 2026-08-31 — Campaign 1 CLOSED: winner d62fa0fc accepted, box destroyed
+
+Human accepted d62fa0fc6c0a (20% tulu mix @ rev 55e9fd6, lr 5e-6,
+1 epoch) as the campaign-1 recipe. Rationale: IFEval gap to a9c55f0c
+inside the pre-registered 0.015 gray band = tie; veto board strictly
+stronger (8/8 clean, 2 end-to-end submissions vs 1 empty-capture);
+GSM8K also higher. Checkpoint at sweep_finals/d62fa0fc6c0a in the store;
+veto transcripts under sweep_veto/. GPU box 49280231 destroyed
+(destroy:success). Conductor VM 49274914 retained as ops box.
+Campaign 1 total: 9 trials + baseline + 16 veto rollouts, ~$11 of
+compute against the $35 cap, zero corrupted results, two conductor
+defects found+fixed live (ssh-timeout crash, unenforced launch cap),
+one eval-instrument defect (tool-parser mismatch) caught before it
+poisoned a verdict. Unblocked: RUN-corpus sizing (task 6) trains with
+the winning recipe; campaign 2 (KD-alpha) plugs into the same loop.
